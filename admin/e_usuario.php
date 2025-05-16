@@ -1,3 +1,23 @@
+
+<?php
+require 'config.php';
+session_start();
+
+// Obtener lista de usuarios para el select
+$stmt = $conn->query("SELECT id_usuario, nombre FROM usuarios");
+$usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $id = $_POST['usuario'];
+    
+    $stmt = $conn->prepare("DELETE FROM usuarios WHERE id_usuario = ?");
+    $stmt->execute([$id]);
+    
+    header("Location: p_admin.html");
+    exit;
+}
+?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>

@@ -1,3 +1,21 @@
+<?php
+require 'config.php';
+session_start();
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $nombre = "Semestre " . date('Y-m'); // O permitir nombre personalizado
+    $fecha_inicio = $_POST['fecha_inicio'];
+    $fecha_fin = $_POST['fecha_fin'];
+    
+    $stmt = $conn->prepare("INSERT INTO semestres (nombre, fecha_inicio, fecha_fin, id_admin) VALUES (?, ?, ?, ?)");
+    $stmt->execute([$nombre, $fecha_inicio, $fecha_fin, $_SESSION['user_id']]);
+    
+    header("Location: p_admin.html");
+    exit;
+}
+?>
+
+
 <!DOCTYPE html>
 <html lang="es">
 <head>

@@ -1,3 +1,29 @@
+<?php
+require 'config.php';
+session_start();
+
+// Obtener lista de usuarios para el select
+$stmt = $conn->query("SELECT id_usuario, nombre FROM usuarios");
+$usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $id = $_POST['usuario'];
+    $nombre = $_POST['nuevo_nombre'];
+    $password = !empty($_POST['nueva_password']) ? password_hash($_POST['nueva_password'], PASSWORD_DEFAULT) : null;
+    
+    if ($password) {
+        $stmt = $conn->prepare("UPDATE usuarios SET nombre = ?, contraseña_hash = ? WHERE id_usuario = ?");
+        $stmt->execute([$nombre, $password, $id]);
+    } else {
+        $stmt = $conn->prepare("UPDATE usuarios SET nombre = ? WHERE id_usuario = ?");
+        $stmt->execute([$nombre, $id]);
+    }
+    
+    header("Location: p_admin.html");
+    exit;
+}
+?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
