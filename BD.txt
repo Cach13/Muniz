@@ -1,0 +1,87 @@
+
+-- Tabla de usuarios
+CREATE TABLE Usuarios (
+    id_usuario INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    correo VARCHAR(100) UNIQUE NOT NULL,
+    contraseña_hash VARCHAR(255) NOT NULL,
+    rol ENUM('admin', 'alumno') NOT NULL
+);
+
+-- Tabla de semestres
+CREATE TABLE Semestres (
+    id_semestre INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(50),
+    fecha_inicio DATE NOT NULL,
+    fecha_fin DATE NOT NULL,
+    id_admin INT NOT NULL,
+    FOREIGN KEY (id_admin) REFERENCES Usuarios(id_usuario)
+);
+
+-- Tabla de días no hábiles
+CREATE TABLE DiasNoHabiles (
+    id_dia INT AUTO_INCREMENT PRIMARY KEY,
+    id_semestre INT NOT NULL,
+    fecha DATE NOT NULL,
+    descripcion VARCHAR(100),
+    FOREIGN KEY (id_semestre) REFERENCES Semestres(id_semestre)
+);
+
+-- Tabla de programas académicos
+CREATE TABLE Programas (
+    id_programa INT AUTO_INCREMENT PRIMARY KEY,
+    id_semestre INT NOT NULL,
+    nombre_materia VARCHAR(100) NOT NULL,
+    horas_teoricas INT,
+    horas_practicas INT,
+    id_admin INT NOT NULL,
+    FOREIGN KEY (id_semestre) REFERENCES Semestres(id_semestre),
+    FOREIGN KEY (id_admin) REFERENCES Usuarios(id_usuario)
+);
+
+-- Tabla de unidades
+CREATE TABLE Unidades (
+    id_unidad INT AUTO_INCREMENT PRIMARY KEY,
+    id_programa INT NOT NULL,
+    nombre_unidad VARCHAR(100),
+    numero_unidad INT,
+    FOREIGN KEY (id_programa) REFERENCES Programas(id_programa)
+);
+
+-- Tabla de temas
+CREATE TABLE Temas (
+    id_tema INT AUTO_INCREMENT PRIMARY KEY,
+    id_unidad INT NOT NULL,
+    nombre_tema VARCHAR(100),
+    horas_estimadas INT,
+    FOREIGN KEY (id_unidad) REFERENCES Unidades(id_unidad)
+);
+
+-- Tabla de evaluaciones (definidas por el usuario)
+CREATE TABLE Evaluaciones (
+    id_evaluacion INT AUTO_INCREMENT PRIMARY KEY,
+    id_unidad INT NOT NULL,
+    id_usuario INT NOT NULL,
+    fecha_evaluacion DATE NOT NULL,
+    FOREIGN KEY (id_unidad) REFERENCES Unidades(id_unidad),
+    FOREIGN KEY (id_usuario) REFERENCES Usuarios(id_usuario)
+);
+
+-- Tabla de disponibilidad diaria del usuario
+CREATE TABLE Disponibilidad (
+    id_disponibilidad INT AUTO_INCREMENT PRIMARY KEY,
+    id_usuario INT NOT NULL,
+    fecha DATE NOT NULL,
+    hora_inicio TIME NOT NULL,
+    hora_fin TIME NOT NULL,
+    FOREIGN KEY (id_usuario) REFERENCES Usuarios(id_usuario)
+);
+
+-- Tabla de dosificación (resultado del cálculo)
+CREATE TABLE Dosificacion (
+    id_dosificacion INT AUTO_INCREMENT PRIMARY KEY,
+    id_tema INT NOT NULL,
+    fecha DATE NOT NULL,
+    horas_asignadas DECIMAL(4,2),
+    FOREIGN KEY (id_tema) REFERENCES Temas(id_tema)
+);
