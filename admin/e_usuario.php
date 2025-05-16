@@ -28,12 +28,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body>
 
     <h2>Eliminar Usuario</h2>
-    <form>
+    <form method="POST">
         <label>Seleccionar Usuario:</label>
-        <select required>
+        <select name="usuario" required>
             <option value="">Seleccione un usuario</option>
-            <option value="usuario1">usuario1</option>
-            <option value="usuario2">usuario2</option>
+            <?php foreach ($usuarios as $usuario): ?>
+                <option value="<?php echo $usuario['id_usuario']; ?>"><?php echo htmlspecialchars($usuario['nombre']); ?></option>
+            <?php endforeach; ?>
         </select>
 
         <button type="submit" class="eliminar">Eliminar Usuario</button>

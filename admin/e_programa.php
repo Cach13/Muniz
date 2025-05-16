@@ -10,16 +10,33 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $id = $_POST['programa'];
     
     // Primero eliminar temas y unidades relacionadas
-    // (Implementar transacciones para mayor seguridad)
-    
-    $stmt = $conn->prepare("DELETE FROM programas WHERE id_programa = ?");
-    $stmt->execute([$id]);
-    
-    header("Location: p_admin.html");
-    exit;
+    try {
+        $conn->beginTransaction();
+        
+        // Eliminar temas
+        $stmt = $conn->prepare("DELETE temas FROM temas 
+                               INNER JOIN unidades ON temas.id_unidad = unidades.id_unidad 
+                               WHERE unidades.id_programa = ?");
+        $stmt->execute([$id]);
+        
+        // Eliminar unidades
+        $stmt = $conn->prepare("DELETE FROM unidades WHERE id_programa = ?");
+        $stmt->execute([$id]);
+        
+        // Eliminar programa
+        $stmt = $conn->prepare("DELETE FROM programas WHERE id_programa = ?");
+        $stmt->execute([$id]);
+        
+        $conn->commit();
+        
+        header("Location: p_admin.html");
+        exit;
+    } catch (PDOException $e) {
+        $conn->rollBack();
+        echo "Error: " . $e->getMessage();
+    }
 }
 ?>
-
 
 <!DOCTYPE html>
 <html lang="es">
@@ -31,12 +48,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body>
 
     <h2>Eliminar Programa</h2>
-    <form>
+    <form method="POST">
         <label>Seleccionar Programa:</label>
-        <select required>
+        <select name="programa" required>
             <option value="">Seleccione un programa</option>
-            <option value="matematicas">Matemáticas</option>
-            <option value="historia">Historia</option>
+            <?php foreach ($programas as $programa): ?>
+                <option value="<?php echo $programa['id_programa']; ?>"><?php echo htmlspecialchars($programa['nombre_materia']); ?></option>
+            <?php endforeach; ?>
         </select>
 
         <button type="submit" class="eliminar">Eliminar Programa</button>

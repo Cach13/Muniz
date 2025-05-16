@@ -9,7 +9,7 @@ $semestres = $stmt->fetchAll(PDO::FETCH_ASSOC);
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $descripcion = $_POST['descripcion'];
     $fecha = $_POST['fecha'];
-    $id_semestre = $_POST['semestre']; // Agregar select en el formulario
+    $id_semestre = $_POST['semestre']; 
     
     $stmt = $conn->prepare("INSERT INTO diasnohabiles (id_semestre, fecha, descripcion) VALUES (?, ?, ?)");
     $stmt->execute([$id_semestre, $fecha, $descripcion]);
@@ -18,7 +18,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     exit;
 }
 ?>
-
 
 <!DOCTYPE html>
 <html lang="es">
@@ -29,9 +28,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 <body>
     <h2>Registrar Días Feriados y Vacaciones</h2>
-    <form>
-        <input type="text" placeholder="Descripción" required>
-        <input type="date" required>
+    <form method="POST">
+        <input type="text" name="descripcion" placeholder="Descripción" required>
+        <input type="date" name="fecha" required>
+        
+        <label>Semestre:</label>
+        <select name="semestre" required>
+            <option value="">Seleccione un semestre</option>
+            <?php foreach ($semestres as $semestre): ?>
+                <option value="<?php echo $semestre['id_semestre']; ?>"><?php echo htmlspecialchars($semestre['nombre']); ?></option>
+            <?php endforeach; ?>
+        </select>
+        
         <button type="submit">Registrar Día</button>
     </form>
     <a href="p_admin.html">Volver al menú</a>
