@@ -3,4 +3,4 @@ Consiste en distintas pantallas con funciones como inicio de sesion, cambiar con
 del semestre y genear reportes
 
 -Primer commit:
-*Maquetacion de todas las pantallas, asi como su base de datos
+Maquetacion de todas las pantallas, asi como su base de datos
