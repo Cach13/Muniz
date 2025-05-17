@@ -50,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         
         $conn->commit();
-        header("Location: p_admin.html");
+        header("Location: r_programa.php");
         exit;
     } catch (PDOException $e) {
         $conn->rollBack();
@@ -107,5 +107,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <button type="submit">Registrar Programa</button>
     </form>
     <a href="p_admin.html">Volver al menú</a>
+
+    <script>
+        // Inicializar la validación al cargar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            actualizarLimitesFecha();
+        });
+    </script>
+    
 </body>
 </html>
