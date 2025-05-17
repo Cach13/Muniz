@@ -2,34 +2,91 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Registro Usuario</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Actividades</title>
     <link rel="stylesheet" href="css/usuario.css">
 </head>
 <body>
+    <div class="container">
+        <h2>Registro de Actividades</h2>
+        
+        <div id="mensaje-respuesta" class="mensaje"></div>
+        
+        <form id="form-programa" action="procesar_programa.php" method="POST">
+            <div class="form-group">
+                <label for="materia">Materia:</label>
+                <select id="materia" name="materia" required>
+                    <option value="">Seleccione una materia</option>
+                    <!-- Las opciones se cargarán dinámicamente con JavaScript -->
+                </select>
+            </div>
 
-    <h2>Registro de Actividades</h2>
-    <form>
-        <label>Materia:</label>
-        <input type="text" placeholder="Nombre de la Materia" required>
+            <div class="form-group">
+                <label for="unidad">Unidad:</label>
+                <select id="unidad" name="unidad" required disabled>
+                    <option value="">Primero seleccione una materia</option>
+                </select>
+            </div>
 
-        <label>Horas destinadas a cada tema:</label>
-        <input type="text" placeholder="Tema" required>
-        <input type="number" placeholder="Horas destinadas" required>
+            <div class="tema-container">
+                <h3>Registrar Tema</h3>
+                <div class="form-group">
+                    <label for="tema">Tema:</label>
+                    <input type="text" id="tema" name="tema" placeholder="Nombre del tema" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="horas">Horas destinadas:</label>
+                    <input type="number" id="horas" name="horas" min="1" max="20" placeholder="Horas" required>
+                </div>
+                
+                <button type="button" id="agregar-tema" class="btn">Agregar Tema</button>
+            </div>
 
-        <label>Fecha de evaluación:</label>
-        <input type="date" required>
+            <div id="temas-agregados" class="temas-list">
+                <h3>Temas Agregados</h3>
+                <ul id="lista-temas">
+                    <!-- Los temas agregados aparecerán aquí -->
+                </ul>
+            </div>
 
-        <label>Días y horas:</label>
-        <input type="text" placeholder="Día (Ej: Lunes)" required>
-        <input type="time" placeholder="Hora de Inicio" required>
-        <input type="time" placeholder="Hora de Fin" required>
+            <div class="form-group">
+                <label for="fecha-evaluacion">Fecha de evaluación:</label>
+                <input type="date" id="fecha-evaluacion" name="fecha_evaluacion" required>
+            </div>
 
-        <button type="submit">Registrar</button>
-    </form>
+            <div class="horario-container">
+                <h3>Horario de Clases</h3>
+                <div class="form-group horario-row">
+                    <select name="dia[]" required>
+                        <option value="">Seleccione día</option>
+                        <option value="Lunes">Lunes</option>
+                        <option value="Martes">Martes</option>
+                        <option value="Miércoles">Miércoles</option>
+                        <option value="Jueves">Jueves</option>
+                        <option value="Viernes">Viernes</option>
+                        <option value="Sábado">Sábado</option>
+                    </select>
+                    <input type="time" name="hora_inicio[]" required>
+                    <input type="time" name="hora_fin[]" required>
+                    <button type="button" class="btn-eliminar">✕</button>
+                </div>
+            </div>
+            
+            <button type="button" id="agregar-horario" class="btn">Agregar otro horario</button>
+            
+            <div class="botones">
+                <button type="submit" class="btn btn-primary">Registrar Programa</button>
+                <button type="reset" class="btn btn-secondary">Limpiar</button>
+            </div>
+        </form>
 
-    <a href="p_reportes.html">Ir a Reportes</a>
-    <a href="p_usuario.html">Ir a Inicio</a>
+        <div class="enlaces">
+            <a href="p_reportes.html" class="btn-link">Ir a Reportes</a>
+            <a href="p_usuario.html" class="btn-link">Ir a Inicio</a>
+        </div>
+    </div>
 
-
+    <script src="js/programa.js"></script>
 </body>
 </html>
