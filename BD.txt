@@ -84,3 +84,14 @@ CREATE TABLE Dosificacion (
     horas_asignadas DECIMAL(4,2),
     FOREIGN KEY (id_tema) REFERENCES Temas(id_tema)
 );
+
+
+CREATE TABLE vacaciones (
+    id_lapso INT AUTO_INCREMENT PRIMARY KEY,
+    id_semestre INT NOT NULL,
+    fecha_inicio DATE NOT NULL,
+    fecha_fin DATE NOT NULL,
+    descripcion VARCHAR(100),
+    FOREIGN KEY (id_semestre) REFERENCES Semestres(id_semestre)
+);
+
