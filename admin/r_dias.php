@@ -23,11 +23,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Registrar Días Feriados y Vacaciones</title>
+    <title>Registrar Días Feriados</title>
     <link rel="stylesheet" href="css/form.css">
 </head>
 <body>
-    <h2>Registrar Días Feriados y Vacaciones</h2>
+    <h2>Registrar Días Feriados</h2>
     <form method="POST">
         <input type="text" name="descripcion" placeholder="Descripción" required>
         <input type="date" name="fecha" required>
@@ -41,6 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </select>
         
         <button type="submit">Registrar Día</button>
+        
     </form>
     <a href="p_admin.html">Volver al menú</a>
 </body>
