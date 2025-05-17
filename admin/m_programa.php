@@ -1,5 +1,5 @@
 <?php
-require 'config.php';
+require '..\config.php';
 session_start();
 
 // Obtener lista de programas para el select

@@ -1,6 +1,6 @@
 
 <?php
-require 'config.php';
+require '..\config.php';
 session_start();
 
 // Obtener lista de usuarios para el select

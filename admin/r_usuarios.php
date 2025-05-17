@@ -1,6 +1,6 @@
 
 <?php
-require 'config.php';
+require_once '..\config.php';
 session_start();
 
 // Verificar si hay sesión de administrador
