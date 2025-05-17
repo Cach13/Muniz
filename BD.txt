@@ -52,7 +52,6 @@ CREATE TABLE Temas (
     id_tema INT AUTO_INCREMENT PRIMARY KEY,
     id_unidad INT NOT NULL,
     nombre_tema VARCHAR(100),
-    horas_estimadas INT,
     FOREIGN KEY (id_unidad) REFERENCES Unidades(id_unidad)
 );
 
@@ -93,5 +92,15 @@ CREATE TABLE vacaciones (
     fecha_fin DATE NOT NULL,
     descripcion VARCHAR(100),
     FOREIGN KEY (id_semestre) REFERENCES Semestres(id_semestre)
+);
+
+CREATE TABLE PlanificacionAlumno (
+    id_planificacion INT AUTO_INCREMENT PRIMARY KEY,
+    id_usuario INT NOT NULL,
+    id_tema INT NOT NULL,
+    fecha DATE NOT NULL,
+    horas_planeadas DECIMAL(4,2) NOT NULL,
+    FOREIGN KEY (id_usuario) REFERENCES Usuarios(id_usuario),
+    FOREIGN KEY (id_tema) REFERENCES Temas(id_tema)
 );
 
