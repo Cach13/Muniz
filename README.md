@@ -30,3 +30,5 @@ Maquetacion de todas las pantallas, asi como su base de datos
 -Segundo commit: Se integra funcionalidades php (sin testear) en archivos de la carpeta admin,se añadio config.php que conecta con la base de datos, se agrega Login.php que verifica al usuario con lo que se manda desde index (que fue cambiado) y cambia texto plano en contraseña para hashearlo, falta cambiar para no poder acceder a ninguna pantalla sin iniciar sesion y cambio a la estructura de la bd en BD.txt
 
 -Tercer commit: Se integran funcionalidades completas en toda la carpeta admin y quedan funcionales asi como con todas sus alertas correspondientes, se agrega un pequeño estilo en acciones.css para dar idea de la implementacion para la visualizacion de las alertas al usuario, se agrego una nueva tabla en la base de datos y se quito "horas_estimadas" de la tabla temas (Listo para testear profundamente)
+
+-Cuarto commit: Se agregan 3 scripts nuevos para la funcionalidad del usuario con su correspondiente funcionalidad (listos para testear profundamente) dejando listo el apartado de usuario,se agrega un pequeño cambio a usuario.css para legibilidad, da pie a la proxima generacion de reportes
