@@ -12,6 +12,8 @@ if (!isset($_SESSION['user_id'])) {
 $stmt = $conn->query("SELECT id_semestre, nombre FROM semestres");
 $semestres = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+$mensaje = "";
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     try {
         $conn->beginTransaction();
@@ -50,11 +52,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         
         $conn->commit();
-        header("Location: r_programa.php");
-        exit;
+        $mensaje = "Programa registrado exitosamente.";
     } catch (PDOException $e) {
         $conn->rollBack();
-        echo "Error: " . $e->getMessage();
+        $mensaje = "Error al registrar el programa.";
     }
 }
 ?>
@@ -84,6 +85,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 <body>
     <h2>Registrar Programa Académico</h2>
+
+    <?php if (!empty($mensaje)) : ?>
+        <p><?= $mensaje ?></p>
+    <?php endif; ?>
+
     <form method="POST">
         <input type="text" name="materia" placeholder="Materia" required>
         <input type="number" name="horas_teoricas" placeholder="Horas Teóricas" required min="0">
