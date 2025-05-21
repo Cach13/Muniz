@@ -2,6 +2,7 @@
 session_start();
 require_once 'config.php';
 
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $_POST['username'] ?? '';
     $password = $_POST['password'] ?? '';
@@ -56,9 +57,9 @@ function iniciarSesion($user) {
     $_SESSION['user_role'] = $user['rol'];
 
     if ($user['rol'] === 'admin') {
-        header('Location: admin/p_admin.html');
+        header('Location: admin/p_admin.php');
     } else {
-        header('Location: usua/p_usuario.html');
+        header('Location: usua/p_usuario.php');
     }
     exit;
 }
