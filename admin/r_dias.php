@@ -1,6 +1,11 @@
 <?php
 require_once '..\config.php';
 session_start();
+if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] != 'admin') {
+    header('Location: ../index.php');
+    exit();
+}
+
 
 // Obtener semestres activos para select
 $stmt = $conn->query("SELECT id_semestre, nombre, fecha_inicio, fecha_fin FROM semestres");

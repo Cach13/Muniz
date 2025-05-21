@@ -3,10 +3,11 @@ require_once '..\config.php';
 session_start();
 
 // Verificar si hay sesión de administrador
-if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php");
-    exit;
+if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] != 'admin') {
+    header('Location: ../index.php');
+    exit();
 }
+
 
 // Obtener semestres disponibles
 $stmt = $conn->query("SELECT id_semestre, nombre FROM semestres");

@@ -1,0 +1,34 @@
+<?php
+session_start();
+if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] != 'admin') {
+    header('Location: ../index.php');
+    exit();
+}
+
+?>
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Panel de Administración</title>
+    <link rel="stylesheet" href="css/menu.css">
+</head>
+<body>
+
+    <div class="menu-container">
+        <h1>Panel de Administración</h1>
+        <a href="r_usuarios.php">Registrar Usuarios</a>
+        <a href="r_fechas.php">Registrar Fechas de Semestre</a>
+        <a href="r_vacaciones.php">Registrar Vacaciones</a>
+        <a href="r_dias.php">Registrar Días Feriados</a>
+        <a href="r_programa.php">Registrar Programa Académico</a>
+        <a href="e_usuario.php">Eliminar Usuario</a>
+        <a href="m_usuario.php">Modificar Usuario</a>
+        <a href="e_programa.php">Eliminar Programa</a>
+        <a href="m_programa.php">Modificar Programa</a>
+        <a href="..\index.php">Volver</a>
+    </div>
+
+</body>
+</html>

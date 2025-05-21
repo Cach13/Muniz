@@ -1,6 +1,11 @@
 <?php
 require_once '..\config.php';
 session_start();
+if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] != 'admin') {
+    header('Location: ../index.php');
+    exit();
+}
+
 
 // Obtener lista de programas para el select
 $stmt = $conn->query("SELECT id_programa, nombre_materia, horas_teoricas, horas_practicas FROM programas");
