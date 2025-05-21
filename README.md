@@ -32,3 +32,5 @@ Maquetacion de todas las pantallas, asi como su base de datos
 -Tercer commit: Se integran funcionalidades completas en toda la carpeta admin y quedan funcionales asi como con todas sus alertas correspondientes, se agrega un pequeño estilo en acciones.css para dar idea de la implementacion para la visualizacion de las alertas al usuario, se agrego una nueva tabla en la base de datos y se quito "horas_estimadas" de la tabla temas (Listo para testear profundamente)
 
 -Cuarto commit: Se agregan 3 scripts nuevos para la funcionalidad del usuario con su correspondiente funcionalidad (listos para testear profundamente) dejando listo el apartado de usuario,se agrega un pequeño cambio a usuario.css para legibilidad, da pie a la proxima generacion de reportes
+
+-Quinto commit: se concluye la funcionalidad de generacion de reportes añadiendo 3 nuevos scripts, se añade funcionalidad a todas las partes de la pagina para no poder accesar sin iniciar sesion, cambio final a la estructura de la base de datos (se agregaron 2 columnas a la tabla dosificacion), listo para INICIAR CAMBIOS VISUALES y PRUEBAS COMPLETAS
