@@ -241,7 +241,7 @@ function calcularDuracionHoras($hora_inicio, $hora_fin) {
 <head>
     <meta charset="UTF-8">
     <title>Registro de Disponibilidad</title>
-    <link rel="stylesheet" href="css/usuario.css">
+    <link rel="stylesheet" href="css/styles_u.css">
 </head>
 <body>
     <h2>Registro de Disponibilidad</h2>

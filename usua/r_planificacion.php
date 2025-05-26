@@ -150,7 +150,7 @@ if (!empty($temas)) {
 <head>
     <meta charset="UTF-8">
     <title>Planificación de Estudios</title>
-    <link rel="stylesheet" href="css/usuario.css">
+    <link rel="stylesheet" href="css/styles_u.css">
 </head>
 <body>
     <h2>Planificación de Estudios</h2>
