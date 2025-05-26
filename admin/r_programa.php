@@ -66,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <head>
     <meta charset="UTF-8">
     <title>Registrar Programa Académico</title>
-    <link rel="stylesheet" href="css/form.css">
+    <link rel="stylesheet" href="css/styles.css">
     <script>
     function mostrarCamposTemas() {
         var numUnidades = document.getElementById('num_unidades').value;

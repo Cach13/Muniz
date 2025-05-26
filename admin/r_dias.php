@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <head>
     <meta charset="UTF-8">
     <title>Registrar Días Feriados</title>
-    <link rel="stylesheet" href="css/form.css">
+    <link rel="stylesheet" href="css/styles.css">
 
     <script>
         function validarFecha() {

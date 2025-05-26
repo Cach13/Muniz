@@ -1,0 +1,414 @@
+/* Variables CSS para consistencia - Diseño Moderno con Fondo Legible */
+:root {
+  --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --secondary-gradient: linear-gradient(135deg, #374151, #1f2937);
+  --success-gradient: linear-gradient(135deg, #10b981, #059669);
+  --danger-gradient: linear-gradient(135deg, #ef4444, #dc2626);
+  --warning-gradient: linear-gradient(135deg, #f59e0b, #d97706);
+  --primary-color: #667eea;
+  --primary-hover: #5a6fd8;
+  --text-primary: #1f2937;
+  --text-secondary: #6b7280;
+  --text-muted: #9ca3af;
+  --bg-glass: rgba(255, 255, 255, 0.95);
+  --bg-card: rgba(255, 255, 255, 0.9);
+  --border-glass: rgba(255, 255, 255, 0.2);
+  --border-color: rgba(229, 231, 235, 0.8);
+  --shadow-glass: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  --shadow-hover: 0 8px 16px -4px rgba(0, 0, 0, 0.2);
+  --radius: 12px;
+  --radius-lg: 24px;
+  --transition: all 0.2s ease;
+  
+  /* Fondo principal más claro y legible */
+  --bg-main: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e1 100%);
+  
+  /* Variables adicionales para compatibilidad */
+  --primary-light: #dbeafe;
+  --accent-color: #e2e8f0;
+  --danger-color: #ef4444;
+  --danger-hover: #dc2626;
+  --success-color: #10b981;
+  --success-hover: #059669;
+  --bg-subtle: #f9fafb;
+  --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --radius-sm: 0.375rem;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ===== ESTILOS BASE BODY ===== */
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg-main);
+  color: var(--text-primary);
+  line-height: 1.5;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+/* Body con fondo gradiente para casos específicos */
+body.gradient-bg {
+  background: var(--primary-gradient);
+}
+
+/* ===== CONTENEDORES PRINCIPALES ===== */
+.contenedor,
+.login-container {
+  background: var(--bg-glass);
+  backdrop-filter: blur(20px);
+  border-radius: var(--radius-lg);
+  padding: 3rem 2.5rem;
+  width: 100%;
+  max-width: 450px;
+  box-shadow: var(--shadow-glass);
+  border: 1px solid var(--border-glass);
+  position: relative;
+  overflow: hidden;
+  margin: 0 auto;
+}
+
+.contenedor::before,
+.login-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--primary-gradient);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
+/* ===== TÍTULOS PRINCIPALES ===== */
+.contenedor h2,
+.login-container h2 {
+  text-align: center;
+  margin-bottom: 2.5rem;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  background: var(--primary-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.025em;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Alternativa para títulos con mejor contraste */
+.contenedor h2.solid-title,
+.login-container h2.solid-title {
+  color: var(--text-primary);
+  background: none;
+  -webkit-text-fill-color: var(--text-primary);
+  text-shadow: none;
+}
+
+/* ===== SUBTÍTULOS ===== */
+.contenedor .subtitle,
+.login-container .subtitle {
+  color: var(--text-secondary);
+  font-size: 1rem;
+  font-weight: 400;
+  text-align: center;
+  margin-bottom: 2rem;
+  line-height: 1.6;
+}
+
+/* ===== FORMULARIOS ===== */
+.contenedor form {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===== LABELS ===== */
+.contenedor label {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.75rem;
+  margin-top: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.contenedor label:first-of-type {
+  margin-top: 0;
+}
+
+/* ===== CAMPOS DE ENTRADA ===== */
+.contenedor input[type="text"],
+.contenedor input[type="password"],
+.login-container input {
+  width: 100%;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  background: var(--bg-card);
+  backdrop-filter: blur(10px);
+  transition: var(--transition);
+  font-family: inherit;
+}
+
+/* Ajuste específico para inputs en contenedor con labels */
+.contenedor input[type="text"],
+.contenedor input[type="password"] {
+  margin-bottom: 1rem;
+}
+
+/* ===== ESTADOS DE FOCUS ===== */
+.contenedor input[type="text"]:focus,
+.contenedor input[type="password"]:focus,
+.login-container input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  transform: translateY(-1px);
+}
+
+/* ===== PLACEHOLDER ===== */
+.contenedor input[type="text"]::placeholder,
+.contenedor input[type="password"]::placeholder,
+.login-container input::placeholder {
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+/* ===== BOTONES ===== */
+.contenedor button[type="submit"],
+.login-container button {
+  width: 100%;
+  padding: 1rem 1.5rem;
+  background: var(--primary-gradient);
+  color: white;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-family: inherit;
+  margin-top: 1.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.contenedor button[type="submit"]::before,
+.login-container button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+/* ===== ESTADOS HOVER DE BOTONES ===== */
+.contenedor button[type="submit"]:hover,
+.login-container button:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hover);
+  background: linear-gradient(135deg, #5a67d8, #6b46c1);
+}
+
+.contenedor button[type="submit"]:hover::before,
+.login-container button:hover::before {
+  left: 100%;
+}
+
+/* ===== ESTADOS ACTIVE DE BOTONES ===== */
+.contenedor button[type="submit"]:active,
+.login-container button:active {
+  transform: translateY(-1px);
+}
+
+/* ===== VALIDACIÓN VISUAL PARA INPUTS ===== */
+.contenedor input:invalid:not(:focus):not(:placeholder-shown) {
+  border-color: var(--danger-color);
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.contenedor input:valid:not(:focus):not(:placeholder-shown) {
+  border-color: var(--success-color);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+/* ===== MENSAJES DE ESTADO ===== */
+.mensaje {
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+  border-radius: var(--radius);
+  font-weight: 500;
+  backdrop-filter: blur(10px);
+  font-size: 0.9rem;
+}
+
+.mensaje.exito {
+  background: rgba(16, 185, 129, 0.1);
+  color: #059669;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.mensaje.error {
+  background: rgba(239, 68, 68, 0.1);
+  color: #dc2626;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+/* ===== VARIANTES DE BOTONES ===== */
+.contenedor button.eliminar,
+.contenedor button.danger,
+.login-container button.danger {
+  background: var(--danger-gradient);
+}
+
+.contenedor button.secondary,
+.login-container button.secondary {
+  background: var(--secondary-gradient);
+}
+
+.contenedor button.success,
+.login-container button.success {
+  background: var(--success-gradient);
+}
+
+.contenedor button.warning,
+.login-container button.warning {
+  background: var(--warning-gradient);
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 640px) {
+  body {
+    padding: 1rem 0.75rem;
+  }
+  
+  .contenedor,
+  .login-container {
+    padding: 2rem 1.5rem;
+    margin: 1rem auto;
+    max-width: 100%;
+  }
+
+  .contenedor h2,
+  .login-container h2 {
+    font-size: 1.75rem;
+    margin-bottom: 2rem;
+  }
+
+  .contenedor input[type="text"],
+  .contenedor input[type="password"],
+  .contenedor button[type="submit"],
+  .login-container input,
+  .login-container button {
+    padding: 0.875rem 1rem;
+    font-size: 0.875rem;
+  }
+
+  .contenedor label {
+    font-size: 0.8rem;
+  }
+
+  .contenedor .subtitle,
+  .login-container .subtitle {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .contenedor,
+  .login-container {
+    padding: 2.5rem 2rem;
+    margin: 1rem;
+  }
+  
+  .contenedor h2,
+  .login-container h2 {
+    font-size: 1.75rem;
+  }
+
+  .contenedor input[type="text"],
+  .contenedor input[type="password"],
+  .login-container input {
+    padding: 0.875rem 1rem;
+  }
+
+  .contenedor button[type="submit"],
+  .login-container button {
+    padding: 0.875rem 1rem;
+  }
+}
+
+/* ===== CLASES UTILITARIAS ===== */
+.text-center {
+  text-align: center;
+}
+
+.mt-2 {
+  margin-top: 2rem;
+}
+
+.mb-2 {
+  margin-bottom: 2rem;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.flex {
+  display: flex;
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gap-1 {
+  gap: 1rem;
+}
+
+.w-full {
+  width: 100%;
+}
+
+.max-w-md {
+  max-width: 28rem;
+}
+
+.max-w-lg {
+  max-width: 32rem;
+}
+
+.max-w-xl {
+  max-width: 36rem;
+}

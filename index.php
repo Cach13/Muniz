@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Login - Sistema de Cronograma</title>
-    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/styles_g.css">
     <script src="js/login.js" defer></script>
 </head>
 <body>

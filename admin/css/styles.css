@@ -1,9 +1,10 @@
-/* Variables CSS para consistencia - Diseño Moderno Glassmorphism */
+/* Variables CSS para consistencia - Diseño Moderno con Fondo Legible */
 :root {
   --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   --secondary-gradient: linear-gradient(135deg, #374151, #1f2937);
   --success-gradient: linear-gradient(135deg, #10b981, #059669);
   --danger-gradient: linear-gradient(135deg, #ef4444, #dc2626);
+  --warning-gradient: linear-gradient(135deg, #f59e0b, #d97706);
   --primary-color: #667eea;
   --primary-hover: #5a6fd8;
   --text-primary: #1f2937;
@@ -12,11 +13,29 @@
   --bg-glass: rgba(255, 255, 255, 0.95);
   --bg-card: rgba(255, 255, 255, 0.9);
   --border-glass: rgba(255, 255, 255, 0.2);
+  --border-color: rgba(229, 231, 235, 0.8);
   --shadow-glass: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   --shadow-hover: 0 8px 16px -4px rgba(0, 0, 0, 0.2);
   --radius: 12px;
   --radius-lg: 24px;
   --transition: all 0.2s ease;
+  
+  /* Fondo principal más claro y legible */
+  --bg-main: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e1 100%);
+  
+  /* Variables adicionales para compatibilidad */
+  --primary-light: #dbeafe;
+  --accent-color: #e2e8f0;
+  --danger-color: #ef4444;
+  --danger-hover: #dc2626;
+  --success-color: #10b981;
+  --success-hover: #059669;
+  --bg-subtle: #f9fafb;
+  --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --radius-sm: 0.375rem;
 }
 
 * {
@@ -25,16 +44,334 @@
   box-sizing: border-box;
 }
 
+/* ===== ESTILOS BASE BODY ===== */
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background: var(--primary-gradient);
+  background: var(--bg-main);
+  color: var(--text-primary);
+  line-height: 1.5;
   min-height: 100vh;
+}
+
+/* Body para páginas generales (formularios, tablas) */
+body.general-page {
+  padding: 2rem 1rem;
+  margin: 0;
+}
+
+/* Body para páginas centradas (login, menú) */
+body.centered-page {
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 1rem;
 }
 
+/* Body para páginas con fondo gradiente (acciones, formularios) */
+body.gradient-bg {
+  background: var(--primary-gradient);
+}
+
+/* ===== TÍTULOS ===== */
+h1, h2 {
+  color: var(--text-primary);
+  font-weight: 700;
+  text-align: center;
+  letter-spacing: -0.025em;
+}
+
+h1 {
+  font-size: 2rem;
+  margin-bottom: 2.5rem;
+}
+
+h2 {
+  margin-bottom: 2.5rem;
+  font-size: 2rem;
+  /* Título con gradiente para mejor impacto visual */
+  background: var(--primary-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Alternativa para títulos con mejor contraste */
+h2.solid-title, h1.solid-title {
+  color: var(--text-primary);
+  background: none;
+  -webkit-text-fill-color: var(--text-primary);
+  text-shadow: none;
+}
+
+/* ===== FORMULARIOS ===== */
+form {
+  background: var(--bg-glass);
+  backdrop-filter: blur(20px);
+  padding: 3rem 2.5rem;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-glass);
+  max-width: 700px;
+  margin: 0 auto;
+  border: 1px solid var(--border-glass);
+  position: relative;
+  overflow: hidden;
+}
+
+form::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--primary-gradient);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
+.form-group {
+  margin-bottom: 1.75rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.75rem;
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ===== CAMPOS DE ENTRADA ===== */
+input, select, textarea {
+  width: 100%;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  font-size: 1rem;
+  transition: var(--transition);
+  background: var(--bg-card);
+  backdrop-filter: blur(10px);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-weight: 500;
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  transform: translateY(-1px);
+}
+
+input::placeholder, textarea::placeholder {
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 140px;
+  line-height: 1.6;
+}
+
+select {
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 1rem center;
+  background-repeat: no-repeat;
+  background-size: 1.25em 1.25em;
+  padding-right: 3rem;
+  appearance: none;
+}
+
+/* ===== BOTONES ===== */
+.button-group {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2.5rem;
+  flex-wrap: wrap;
+}
+
+button {
+  padding: 1rem 1.5rem;
+  background: var(--primary-gradient);
+  color: white;
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: var(--transition);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 1;
+  justify-content: center;
+  min-width: 140px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Botón único (no en grupo) */
+button.single-button {
+  flex: none;
+  padding: 1rem 2rem;
+  font-size: 1rem;
+  margin-top: 1rem;
+}
+
+/* Botón de ancho completo */
+button.full-width {
+  width: 100%;
+  flex: none;
+}
+
+button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hover);
+}
+
+button:hover::before {
+  left: 100%;
+}
+
+button:active {
+  transform: translateY(-1px);
+}
+
+/* Variantes de botones */
+button.eliminar, button.danger {
+  background: var(--danger-gradient);
+}
+
+button.secondary {
+  background: var(--secondary-gradient);
+}
+
+button.success {
+  background: var(--success-gradient);
+}
+
+button.warning {
+  background: var(--warning-gradient);
+}
+
+/* ===== ENLACES ===== */
+a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 2rem;
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 600;
+  transition: var(--transition);
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius);
+  background: rgba(102, 126, 234, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+a:hover {
+  background: rgba(102, 126, 234, 0.15);
+  transform: translateX(-2px);
+}
+
+/* ===== TABLAS ===== */
+.table-container {
+  background: var(--bg-glass);
+  backdrop-filter: blur(20px);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-glass);
+  overflow: hidden;
+  margin: 2rem auto;
+  max-width: 1000px;
+  border: 1px solid var(--border-glass);
+  position: relative;
+}
+
+.table-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--primary-gradient);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 4px;
+}
+
+th, td {
+  padding: 1.25rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+  font-weight: 500;
+}
+
+th {
+  background: rgba(102, 126, 234, 0.05);
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+tr {
+  transition: var(--transition);
+}
+
+tr:hover {
+  background: rgba(102, 126, 234, 0.08);
+  transform: translateX(2px);
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+
+/* ===== MENSAJES DE ESTADO ===== */
+.mensaje {
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+  border-radius: var(--radius);
+  font-weight: 500;
+  backdrop-filter: blur(10px);
+}
+
+.mensaje.exito {
+  background: rgba(16, 185, 129, 0.1);
+  color: #059669;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.mensaje.error {
+  background: rgba(239, 68, 68, 0.1);
+  color: #dc2626;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+/* ===== CONTENEDOR DE LOGIN ===== */
 .login-container {
   background: var(--bg-glass);
   backdrop-filter: blur(20px);
@@ -46,6 +383,7 @@ body {
   border: 1px solid var(--border-glass);
   position: relative;
   overflow: hidden;
+  margin: 0 auto;
 }
 
 .login-container::before {
@@ -73,73 +411,133 @@ body {
 }
 
 .login-container input {
-  width: 100%;
-  padding: 1rem 1.25rem;
   margin-bottom: 1.5rem;
-  border: 1px solid rgba(229, 231, 235, 0.8);
-  border-radius: var(--radius);
-  font-size: 1rem;
-  transition: var(--transition);
-  background: var(--bg-card);
-  backdrop-filter: blur(10px);
-  color: var(--text-primary);
-  font-family: inherit;
-  font-weight: 500;
 }
 
-.login-container input:focus {
-  outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-  transform: translateY(-1px);
-}
-
-.login-container input::placeholder {
-  color: var(--text-muted);
-  font-weight: 400;
-}
-
-.login-container button {
+/* ===== CONTENEDOR DE MENÚ ===== */
+.menu-container {
+  background: var(--bg-glass);
+  backdrop-filter: blur(20px);
+  padding: 3rem 2rem;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-glass);
+  text-align: center;
   width: 100%;
-  padding: 1rem 1.25rem;
-  background: var(--primary-gradient);
-  color: white;
-  border: none;
-  border-radius: var(--radius);
-  cursor: pointer;
-  font-size: 1rem;
-  font-weight: 600;
-  transition: var(--transition);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  max-width: 450px;
+  border: 1px solid var(--border-glass);
   position: relative;
   overflow: hidden;
+  margin: 0 auto;
 }
 
-.login-container button::before {
+.menu-container::before {
   content: '';
   position: absolute;
   top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transition: left 0.5s ease;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--primary-gradient);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
 }
 
-.login-container button:hover {
-  transform: translateY(-2px);
+.menu-container h1 {
+  margin-bottom: 2.5rem;
+  color: var(--text-primary);
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+
+.menu-container a {
+  display: block;
+  margin: 0.75rem 0;
+  padding: 1rem 1.5rem;
+  background: var(--primary-color);
+  color: white;
+  text-decoration: none;
+  border-radius: var(--radius);
+  font-weight: 500;
+  font-size: 0.875rem;
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.menu-container a:hover {
+  background: var(--primary-hover);
+  transform: translateY(-1px);
   box-shadow: var(--shadow-hover);
 }
 
-.login-container button:hover::before {
-  left: 100%;
+.menu-container a:active {
+  transform: translateY(0);
 }
 
-.login-container button:active {
-  transform: translateY(-1px);
+/* Colores específicos para diferentes enlaces del menú */
+.menu-container a:nth-child(2) {
+  background: var(--success-gradient);
 }
 
-/* Responsive */
+.menu-container a:nth-child(3) {
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+}
+
+.menu-container a:nth-child(4) {
+  background: var(--warning-gradient);
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 640px) {
+  body.general-page {
+    padding: 1rem 0.75rem;
+  }
+  
+  form, .login-container, .menu-container {
+    padding: 2rem 1.5rem;
+    margin: 1rem auto;
+  }
+  
+  h1, h2, .menu-container h1 {
+    font-size: 1.75rem;
+    margin-bottom: 2rem;
+  }
+  
+  .button-group {
+    flex-direction: column;
+  }
+  
+  button {
+    flex: none;
+    width: 100%;
+  }
+  
+  button.single-button {
+    width: 100%;
+    justify-content: center;
+    padding: 1rem;
+  }
+  
+  .table-container {
+    margin: 1rem auto;
+  }
+  
+  th, td {
+    padding: 1rem 0.75rem;
+    font-size: 0.875rem;
+  }
+
+  input, select, textarea {
+    padding: 0.875rem 1rem;
+  }
+  
+  .menu-container a {
+    padding: 0.875rem 1.25rem;
+    font-size: 0.875rem;
+  }
+}
+
 @media (max-width: 480px) {
   .login-container {
     padding: 2.5rem 2rem;
@@ -157,4 +555,51 @@ body {
   .login-container button {
     padding: 0.875rem 1rem;
   }
+}
+
+/* ===== CLASES UTILITARIAS ===== */
+.text-center {
+  text-align: center;
+}
+
+.mt-2 {
+  margin-top: 2rem;
+}
+
+.mb-2 {
+  margin-bottom: 2rem;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.flex {
+  display: flex;
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gap-1 {
+  gap: 1rem;
+}
+
+.w-full {
+  width: 100%;
+}
+
+.max-w-md {
+  max-width: 28rem;
+}
+
+.max-w-lg {
+  max-width: 32rem;
+}
+
+.max-w-xl {
+  max-width: 36rem;
 }
