@@ -1,6 +1,13 @@
 <?php
-require '..\config.php';
+require_once '..\config.php';
 session_start();
+if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] != 'admin') {
+    header('Location: ../index.php');
+    exit();
+}
+
+
+$mensaje = "";
 
 // Obtener lista de usuarios para el select
 $stmt = $conn->query("SELECT id_usuario, nombre FROM usuarios");
@@ -23,17 +30,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $id = $_POST['usuario'];
     $nombre = $_POST['nuevo_nombre'];
     
-    if (!empty($_POST['nueva_password'])) {
-        $password = password_hash($_POST['nueva_password'], PASSWORD_DEFAULT);
-        $stmt = $conn->prepare("UPDATE usuarios SET nombre = ?, contraseña_hash = ? WHERE id_usuario = ?");
-        $stmt->execute([$nombre, $password, $id]);
-    } else {
-        $stmt = $conn->prepare("UPDATE usuarios SET nombre = ? WHERE id_usuario = ?");
-        $stmt->execute([$nombre, $id]);
+    try {
+        if (!empty($_POST['nueva_password'])) {
+            $password = password_hash($_POST['nueva_password'], PASSWORD_DEFAULT);
+            $stmt = $conn->prepare("UPDATE usuarios SET nombre = ?, contraseña = ? WHERE id_usuario = ?");
+            $stmt->execute([$nombre, $password, $id]);
+        } else {
+            $stmt = $conn->prepare("UPDATE usuarios SET nombre = ? WHERE id_usuario = ?");
+            $stmt->execute([$nombre, $id]);
+        }
+
+        $mensaje = "Usuario modificado correctamente.";
+    } catch (Exception $e) {
+        $mensaje = "Error al modificar el usuario.";
     }
-    
-    header("Location: p_admin.html");
-    exit;
 }
 ?>
 
@@ -59,6 +69,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body>
 
     <h2>Modificar Usuario</h2>
+
+    <?php if (!empty($mensaje)) : ?>
+        <p><?= $mensaje ?></p>
+    <?php endif; ?>
+
     <form method="POST">
         <label>Seleccionar Usuario:</label>
         <select name="usuario" required onchange="cargarDatosUsuario(this)">
@@ -78,6 +93,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </form>
 
     <a href="p_admin.html">Volver a Opciones de Admin</a>
+
+    <script>
+        document.querySelector("form").addEventListener("submit", function(e) {
+            const confirmacion = confirm("¿Estás seguro de que deseas guardar los cambios del usuario?");
+            if (!confirmacion) {
+                e.preventDefault();
+            }
+        });
+    </script>
+
 
 </body>
 </html>

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 * {
@@ -77,8 +78,20 @@ textarea {
 }
 
 select {
-    cursor: pointer;
+=======
+.tabs {
+    display: flex;
+    margin-bottom: 20px;
 }
+.tab {
+    padding: 10px 20px;
+>>>>>>> 77ae23b64c5e9ab3b9a2e5267231bf67259975ad
+    cursor: pointer;
+    border: 1px solid #ccc;
+    background-color: #f1f1f1;
+    margin-right: 5px;
+}
+<<<<<<< HEAD
 
 select option {
     padding: 0.5rem;
@@ -137,6 +150,56 @@ a {
     gap: 0.5rem;
     margin-top: 1rem;
     color: #ffffff;
+=======
+.tab.active {
+    background-color: #4CAF50;
+    color: white;
+}
+.tab-content {
+    display: none;
+    padding: 20px;
+    border: 1px solid #ccc;
+}
+.tab-content.active {
+    display: block;
+}
+.mensaje {
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+}
+.success {
+    background-color: #d4edda;
+    color: #155724;
+}
+.warning {
+    background-color: #fff3cd;
+    color: #856404;
+}
+.danger {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+table, th, td {
+    border: 1px solid #ddd;
+}
+th, td {
+    padding: 10px;
+    text-align: left;
+}
+th {
+    background-color: #4CAF50;
+    color: white;
+}
+.accion {
+    cursor: pointer;
+    color: #dc3545;
+>>>>>>> 77ae23b64c5e9ab3b9a2e5267231bf67259975ad
     text-decoration: none;
     font-weight: 500;
     padding: 0.75rem 1.5rem;
@@ -146,6 +209,7 @@ a {
     border: 1px solid rgba(255, 255, 255, 0.2);
     transition: all 0.2s ease;
 }
+<<<<<<< HEAD
 
 a:hover {
     background: rgba(255, 255, 255, 0.2);
@@ -242,4 +306,50 @@ a:hover {
     h2 {
         font-size: 1.5rem;
     }
+=======
+.accion:hover {
+    text-decoration: underline;
+}
+.unidad-header {
+    background-color: #e9ecef;
+    font-weight: bold;
+    padding: 10px;
+    margin-top: 15px;
+    margin-bottom: 5px;
+}
+
+.unidades-container {
+    margin-top: 10px;
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    padding: 10px;
+}
+        
+.unidad-checkbox {
+    display: block;
+    margin-bottom: 5px;
+}
+        
+.mensaje {
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+}
+        
+.success {
+    background-color: #d4edda;
+    color: #155724;
+}
+        
+.danger {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+        
+.semestre-info {
+    margin-bottom: 10px;
+    font-style: italic;
+    color: #666;
+>>>>>>> 77ae23b64c5e9ab3b9a2e5267231bf67259975ad
 }

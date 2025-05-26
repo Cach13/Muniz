@@ -1,7 +1,13 @@
 
 <?php
-require '..\config.php';
+require_once '..\config.php';
 session_start();
+if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] != 'admin') {
+    header('Location: ../index.php');
+    exit();
+}
+
+$mensaje = "";
 
 // Obtener lista de usuarios para el select
 $stmt = $conn->query("SELECT id_usuario, nombre FROM usuarios");
@@ -9,12 +15,18 @@ $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $id = $_POST['usuario'];
-    
-    $stmt = $conn->prepare("DELETE FROM usuarios WHERE id_usuario = ?");
-    $stmt->execute([$id]);
-    
-    header("Location: p_admin.html");
-    exit;
+
+    try {
+        $stmt = $conn->prepare("DELETE FROM usuarios WHERE id_usuario = ?");
+        $stmt->execute([$id]);
+        $mensaje = "Usuario eliminado correctamente.";
+        
+        // Actualizar lista de usuarios
+        $stmt = $conn->query("SELECT id_usuario, nombre FROM usuarios");
+        $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (Exception $e) {
+        $mensaje = "Error al eliminar el usuario.";
+    }
 }
 ?>
 
@@ -28,6 +40,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body>
 
     <h2>Eliminar Usuario</h2>
+
+    <?php if (!empty($mensaje)): ?>
+        <p><?= $mensaje ?></p>
+    <?php endif; ?>
+
     <form method="POST">
         <label>Seleccionar Usuario:</label>
         <select name="usuario" required>
@@ -41,6 +58,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </form>
 
     <a href="p_admin.html">Volver a Opciones de Admin</a>
+
+    <script>
+        document.querySelector("form").addEventListener("submit", function(e) {
+            const confirmacion = confirm("¿Estás seguro de que deseas eliminar esto? Esta acción no se puede deshacer.");
+            if (!confirmacion) {
+                e.preventDefault();
+            }
+        });
+    </script>
 
 </body>
 </html>

@@ -1,6 +1,12 @@
 <?php
+//funciona
 require_once '..\config.php';
 session_start();
+if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] != 'admin') {
+    header('Location: ../index.php');
+    exit();
+}
+
 
 // Verificar si hay sesión de administrador
 if (!isset($_SESSION['user_id'])) {
@@ -8,16 +14,20 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
+$mensaje = "";
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $nombre = $_POST['nombre'] ?: "Semestre " . date('Y-m');
     $fecha_inicio = $_POST['fecha_inicio'];
     $fecha_fin = $_POST['fecha_fin'];
-    
-    $stmt = $conn->prepare("INSERT INTO semestres (nombre, fecha_inicio, fecha_fin, id_admin) VALUES (?, ?, ?, ?)");
-    $stmt->execute([$nombre, $fecha_inicio, $fecha_fin, $_SESSION['user_id']]);
-    
-    header("Location: p_admin.html");
-    exit;
+
+    try {
+        $stmt = $conn->prepare("INSERT INTO semestres (nombre, fecha_inicio, fecha_fin, id_admin) VALUES (?, ?, ?, ?)");
+        $stmt->execute([$nombre, $fecha_inicio, $fecha_fin, $_SESSION['user_id']]);
+        $mensaje = "Registro exitoso.";
+    } catch (Exception $e) {
+        $mensaje = "Error al registrar.";
+    }
 }
 ?>
 
@@ -30,6 +40,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 <body>
     <h2>Registrar Fechas de Semestre</h2>
+
+    <?php if (!empty($mensaje)) : ?>
+        <p><?= $mensaje ?></p>
+    <?php endif; ?>
+
     <form method="POST">
         <label>Nombre del Semestre:</label>
         <input type="text" name="nombre" placeholder="Nombre del semestre (opcional)">
@@ -43,5 +58,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <button type="submit">Registrar Fechas</button>
     </form>
     <a href="p_admin.html">Volver al menú</a>
+
+    <script>
+        // Inicializar la validación al cargar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            actualizarLimitesFecha();
+        });
+    </script>
+
 </body>
 </html>

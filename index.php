@@ -1,6 +1,4 @@
-<?php
-session_start();
-?>
+<?php session_start(); ?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -34,7 +32,7 @@ session_start();
             <button type="submit" id="login-button">Entrar</button>
         </div>
     </form>
-    
+
     <div class="loader" id="loader" style="display:none;">
         <div class="spinner"></div>
         <p>Verificando credenciales...</p>

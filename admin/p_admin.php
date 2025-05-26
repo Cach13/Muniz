@@ -1,3 +1,12 @@
+<?php
+session_start();
+if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] != 'admin') {
+    header('Location: ../index.php');
+    exit();
+}
+
+?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -178,6 +187,7 @@
             <p class="subtitle">Gestiona tu sistema académico</p>
         </div>
 
+<<<<<<< HEAD:admin/p_admin.html
         <div class="menu-grid">
             <div class="menu-section register">
                 <div class="section-title">Registrar</div>
@@ -246,6 +256,20 @@
             </svg>
             Volver al Inicio
         </a>
+=======
+    <div class="menu-container">
+        <h1>Panel de Administración</h1>
+        <a href="r_usuarios.php">Registrar Usuarios</a>
+        <a href="r_fechas.php">Registrar Fechas de Semestre</a>
+        <a href="r_vacaciones.php">Registrar Vacaciones</a>
+        <a href="r_dias.php">Registrar Días Feriados</a>
+        <a href="r_programa.php">Registrar Programa Académico</a>
+        <a href="e_usuario.php">Eliminar Usuario</a>
+        <a href="m_usuario.php">Modificar Usuario</a>
+        <a href="e_programa.php">Eliminar Programa</a>
+        <a href="m_programa.php">Modificar Programa</a>
+        <a href="..\index.php">Volver</a>
+>>>>>>> 77ae23b64c5e9ab3b9a2e5267231bf67259975ad:admin/p_admin.php
     </div>
 </body>
 </html>

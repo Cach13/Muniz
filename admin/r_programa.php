@@ -3,14 +3,17 @@ require_once '..\config.php';
 session_start();
 
 // Verificar si hay sesión de administrador
-if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php");
-    exit;
+if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] != 'admin') {
+    header('Location: ../index.php');
+    exit();
 }
+
 
 // Obtener semestres disponibles
 $stmt = $conn->query("SELECT id_semestre, nombre FROM semestres");
 $semestres = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+$mensaje = "";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     try {
@@ -50,11 +53,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         
         $conn->commit();
-        header("Location: p_admin.html");
-        exit;
+        $mensaje = "Programa registrado exitosamente.";
     } catch (PDOException $e) {
         $conn->rollBack();
-        echo "Error: " . $e->getMessage();
+        $mensaje = "Error al registrar el programa.";
     }
 }
 ?>
@@ -84,6 +86,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 <body>
     <h2>Registrar Programa Académico</h2>
+
+    <?php if (!empty($mensaje)) : ?>
+        <p><?= $mensaje ?></p>
+    <?php endif; ?>
+
     <form method="POST">
         <input type="text" name="materia" placeholder="Materia" required>
         <input type="number" name="horas_teoricas" placeholder="Horas Teóricas" required min="0">
@@ -107,5 +114,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <button type="submit">Registrar Programa</button>
     </form>
     <a href="p_admin.html">Volver al menú</a>
+
+    <script>
+        // Inicializar la validación al cargar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            actualizarLimitesFecha();
+        });
+    </script>
+    
 </body>
 </html>

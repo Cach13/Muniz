@@ -5,21 +5,26 @@ require_once '..\config.php';
 session_start();
 
 // Verificar si hay sesión de administrador
-if (!isset($_SESSION['user_id'])) {
-    header("Location: ..\login.php");
-    exit;
+if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] != 'admin') {
+    header('Location: ../index.php');
+    exit();
 }
+
+
+$mensaje = "";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $nombre = $_POST['nombre'];
     $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
     $rol = $_POST['rol'];
-    
-    $stmt = $conn->prepare("INSERT INTO usuarios (nombre, contraseña, rol) VALUES (?, ?, ?)");
-    $stmt->execute([$nombre, $password, $rol]);
-    
-    header("Location: p_admin.html");
-    exit;
+
+    try {
+        $stmt = $conn->prepare("INSERT INTO usuarios (nombre, contraseña, rol) VALUES (?, ?, ?)");
+        $stmt->execute([$nombre, $password, $rol]);
+        $mensaje = "Usuario registrado exitosamente.";
+    } catch (Exception $e) {
+        $mensaje = "Error al registrar el usuario.";
+    }
 }
 ?>
 
@@ -32,6 +37,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 <body>
     <h2>Registrar Usuario</h2>
+
+    <?php if (!empty($mensaje)) : ?>
+        <p><?= $mensaje ?></p>
+    <?php endif; ?>
+
     <form method="POST">
         <input type="text" name="nombre" placeholder="Nombre de usuario" required>
         <input type="password" name="password" placeholder="Contraseña" required>
@@ -46,5 +56,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <button type="submit">Registrar Usuario</button>
     </form>
     <a href="p_admin.html">Volver al menú</a>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            actualizarLimitesFecha();
+        });
+    </script>
+    
 </body>
 </html>
