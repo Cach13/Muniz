@@ -1,6 +1,5 @@
-
 -- Tabla de usuarios
-CREATE TABLE Usuarios (
+CREATE TABLE usuarios (
     id_usuario INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
     contraseña VARCHAR(255) NOT NULL,
@@ -8,7 +7,7 @@ CREATE TABLE Usuarios (
 );
 
 -- Tabla de semestres
-CREATE TABLE Semestres (
+CREATE TABLE semestres (
     id_semestre INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(50),
     fecha_inicio DATE NOT NULL,
@@ -18,7 +17,7 @@ CREATE TABLE Semestres (
 );
 
 -- Tabla de días no hábiles
-CREATE TABLE DiasNoHabiles (
+CREATE TABLE diasnohabiles (
     id_dia INT AUTO_INCREMENT PRIMARY KEY,
     id_semestre INT NOT NULL,
     fecha DATE NOT NULL,
@@ -27,7 +26,7 @@ CREATE TABLE DiasNoHabiles (
 );
 
 -- Tabla de programas académicos
-CREATE TABLE Programas (
+CREATE TABLE programas (
     id_programa INT AUTO_INCREMENT PRIMARY KEY,
     id_semestre INT NOT NULL,
     nombre_materia VARCHAR(100) NOT NULL,
@@ -39,7 +38,7 @@ CREATE TABLE Programas (
 );
 
 -- Tabla de unidades
-CREATE TABLE Unidades (
+CREATE TABLE unidades (
     id_unidad INT AUTO_INCREMENT PRIMARY KEY,
     id_programa INT NOT NULL,
     nombre_unidad VARCHAR(100),
@@ -48,16 +47,15 @@ CREATE TABLE Unidades (
 );
 
 -- Tabla de temas
-CREATE TABLE Temas (
+CREATE TABLE temas (
     id_tema INT AUTO_INCREMENT PRIMARY KEY,
     id_unidad INT NOT NULL,
     nombre_tema VARCHAR(100),
-    horas_estimadas INT,
     FOREIGN KEY (id_unidad) REFERENCES Unidades(id_unidad)
 );
 
 -- Tabla de evaluaciones (definidas por el usuario)
-CREATE TABLE Evaluaciones (
+CREATE TABLE evaluaciones (
     id_evaluacion INT AUTO_INCREMENT PRIMARY KEY,
     id_unidad INT NOT NULL,
     id_usuario INT NOT NULL,
@@ -67,12 +65,14 @@ CREATE TABLE Evaluaciones (
 );
 
 -- Tabla de disponibilidad diaria del usuario
-CREATE TABLE Disponibilidad (
+CREATE TABLE disponibilidad (
     id_disponibilidad INT AUTO_INCREMENT PRIMARY KEY,
     id_usuario INT NOT NULL,
     fecha DATE NOT NULL,
     hora_inicio TIME NOT NULL,
     hora_fin TIME NOT NULL,
+    id_tema INT,
+    FOREIGN KEY (id_tema) REFERENCES Temas(id_tema),
     FOREIGN KEY (id_usuario) REFERENCES Usuarios(id_usuario)
 );
 
@@ -82,5 +82,27 @@ CREATE TABLE Dosificacion (
     id_tema INT NOT NULL,
     fecha DATE NOT NULL,
     horas_asignadas DECIMAL(4,2),
+    horas_planeadas DECIMAL(4,2) AFTER fecha,
+    motivo_reduccion ENUM('dia_no_habil', 'evaluacion', 'vacaciones') NULL AFTER horas_asignadas;
+    FOREIGN KEY (id_tema) REFERENCES Temas(id_tema)
+);
+
+
+CREATE TABLE vacaciones (
+    id_lapso INT AUTO_INCREMENT PRIMARY KEY,
+    id_semestre INT NOT NULL,
+    fecha_inicio DATE NOT NULL,
+    fecha_fin DATE NOT NULL,
+    descripcion VARCHAR(100),
+    FOREIGN KEY (id_semestre) REFERENCES Semestres(id_semestre)
+);
+
+CREATE TABLE planificacionusuario (
+    id_planificacion INT AUTO_INCREMENT PRIMARY KEY,
+    id_usuario INT NOT NULL,
+    id_tema INT NOT NULL,
+    fecha DATE NOT NULL,
+    horas_planeadas DECIMAL(4,2) NOT NULL,
+    FOREIGN KEY (id_usuario) REFERENCES Usuarios(id_usuario),
     FOREIGN KEY (id_tema) REFERENCES Temas(id_tema)
 );
