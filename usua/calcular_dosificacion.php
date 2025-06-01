@@ -90,22 +90,30 @@ try {
     foreach ($temas as $tema) {
         $id_tema = $tema['id_tema'];
         
-        // Obtener planificación del usuario para este tema
+        // Obtener disponibilidad del usuario para este tema
         $stmt = $conn->prepare("
-            SELECT fecha, horas_planeadas 
-            FROM planificacionusuario 
+            SELECT fecha, hora_inicio, hora_fin 
+            FROM disponibilidad 
             WHERE id_usuario = ? AND id_tema = ?
             ORDER BY fecha
         ");
         $stmt->execute([$user_id, $id_tema]);
-        $planificacion = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $disponibilidades = $stmt->fetchAll(PDO::FETCH_ASSOC);
         
-        foreach ($planificacion as $plan) {
-            $fecha = $plan['fecha'];
-            $horas_planeadas = $plan['horas_planeadas'];
+        foreach ($disponibilidades as $disponibilidad) {
+            $fecha = $disponibilidad['fecha'];
+            $hora_inicio = $disponibilidad['hora_inicio'];
+            $hora_fin = $disponibilidad['hora_fin'];
+            
+            // Calcular horas planeadas basándose en la diferencia de tiempo
+            $inicio = new DateTime($hora_inicio);
+            $fin = new DateTime($hora_fin);
+            $diferencia = $fin->diff($inicio);
+            $horas_planeadas = $diferencia->h + ($diferencia->i / 60); // Horas + minutos convertidos a decimal
+            
             $horas_asignadas = $horas_planeadas; // Inicialmente asumimos todas las horas
             $motivo_reduccion = null;
-            
+        
             // Para depuración
             $es_dia_inhabil = in_array($fecha, $dias_no_habiles);
             $es_evaluacion = in_array($fecha, $evaluaciones);
@@ -165,8 +173,9 @@ try {
     header('Content-Type: application/json');
     echo json_encode([
         'success' => true,
-        'message' => 'Dosificación calculada correctamente para el programa: ' . $programa['nombre_materia'],
-        'programa_id' => $programa_id
+        'message' => 'Dosificación recalculada correctamente para el programa: ' . $programa['nombre_materia'],
+        'programa_id' => $programa_id,
+        'registros_creados' => count($temas)
     ]);
     
 } catch (Exception $e) {
@@ -175,7 +184,7 @@ try {
     header('Content-Type: application/json');
     echo json_encode([
         'success' => false,
-        'message' => 'Error al calcular la dosificación: ' . $e->getMessage()
+        'message' => 'Error al recalcular la dosificación: ' . $e->getMessage()
     ]);
 }
 ?>
