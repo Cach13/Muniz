@@ -1,3 +1,4 @@
+
 -- Tabla de usuarios
 CREATE TABLE usuarios (
     id_usuario INT AUTO_INCREMENT PRIMARY KEY,
@@ -76,17 +77,15 @@ CREATE TABLE disponibilidad (
     FOREIGN KEY (id_usuario) REFERENCES Usuarios(id_usuario)
 );
 
--- Tabla de dosificación (resultado del cálculo)
-CREATE TABLE Dosificacion (
+CREATE TABLE dosificacion (
     id_dosificacion INT AUTO_INCREMENT PRIMARY KEY,
     id_tema INT NOT NULL,
     fecha DATE NOT NULL,
+    horas_planeadas DECIMAL(4,2),
     horas_asignadas DECIMAL(4,2),
-    horas_planeadas DECIMAL(4,2) AFTER fecha,
-    motivo_reduccion ENUM('dia_no_habil', 'evaluacion', 'vacaciones') NULL AFTER horas_asignadas;
+    motivo_reduccion ENUM('dia_no_habil', 'evaluacion', 'vacaciones') NULL,
     FOREIGN KEY (id_tema) REFERENCES Temas(id_tema)
 );
-
 
 CREATE TABLE vacaciones (
     id_lapso INT AUTO_INCREMENT PRIMARY KEY,
