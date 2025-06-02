@@ -1,4 +1,10 @@
-/* Reset y configuración base */
+/* ================================================================
+   SISTEMA DE GESTIÓN DE HORAS - ESTILOS PRINCIPALES
+   ================================================================ */
+
+/* ================================================================
+   1. RESET Y CONFIGURACIÓN BASE
+   ================================================================ */
 * {
     margin: 0;
     padding: 0;
@@ -14,7 +20,15 @@ body {
     line-height: 1.6;
 }
 
-/* Contenedor principal */
+/* Mejoras de accesibilidad */
+*:focus {
+    outline: 2px solid #667eea;
+    outline-offset: 2px;
+}
+
+/* ================================================================
+   2. LAYOUT PRINCIPAL
+   ================================================================ */
 .container {
     max-width: 1200px;
     margin: 0 auto;
@@ -30,7 +44,9 @@ body {
     margin-bottom: 20px;
 }
 
-/* Header */
+/* ================================================================
+   3. TIPOGRAFÍA Y TÍTULOS
+   ================================================================ */
 .header {
     text-align: center;
     margin-bottom: 40px;
@@ -38,12 +54,13 @@ body {
     border-bottom: 2px solid #f0f0f0;
 }
 
-.header h1, h2 {
+.header h1, 
+h2 {
     font-size: 2.5rem;
     font-weight: 700;
     color: #2c3e50;
     margin-bottom: 10px;
-    background: #8000ff;
+    background: linear-gradient(135deg, #667eea, #764ba2);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -76,7 +93,52 @@ h4 {
     font-weight: 400;
 }
 
-/* Mensajes */
+.section-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 25px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #e9ecef;
+}
+
+/* ================================================================
+   4. CONTENEDORES Y SECCIONES
+   ================================================================ */
+.section, 
+.form-section, 
+.programas-disponibles,
+.disponibilidad-container,
+.planificacion-container,
+.programa-container,
+.horas-container {
+    margin-bottom: 40px;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 30px;
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+    animation: fadeIn 0.6s ease-out;
+}
+
+/* Títulos específicos para contenedores con fondo blanco */
+.disponibilidad-container h3,
+.planificacion-container h3,
+.programa-container h3,
+.horas-container h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 25px;
+    margin-top: 0;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #e9ecef;
+}
+
+/* ================================================================
+   5. MENSAJES Y NOTIFICACIONES
+   ================================================================ */
 .mensaje {
     padding: 15px 20px;
     margin-bottom: 25px;
@@ -104,77 +166,6 @@ h4 {
     border-left-color: #ffc107;
 }
 
-/* Secciones */
-.section, .form-section, .programas-disponibles {
-    margin-bottom: 40px;
-    background: rgba(255, 255, 255, 0.7);
-    padding: 30px;
-    border-radius: 15px;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    backdrop-filter: blur(5px);
-    animation: fadeIn 0.6s ease-out;
-}
-
-.section-title {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: #2c3e50;
-    margin-bottom: 25px;
-    padding-bottom: 10px;
-    border-bottom: 2px solid #e9ecef;
-}
-
-/* Información de programas */
-.programa-info {
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #e9ecef;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-    transition: all 0.3s ease;
-}
-
-.programa-info:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-}
-
-.programa-info.limite-excedido {
-    border-color: #dc3545;
-    background: #fff5f5;
-}
-
-.programa-barra {
-    width: 100%;
-    height: 8px;
-    background: #e9ecef;
-    border-radius: 4px;
-    overflow: hidden;
-    margin-top: 10px;
-}
-
-.programa-progreso {
-    height: 100%;
-    background: linear-gradient(135deg, #28a745, #20c997);
-    transition: width 0.5s ease;
-}
-
-.programa-progreso.excedido {
-    background: linear-gradient(135deg, #dc3545, #c82333);
-}
-
-/* Información de fechas y horas */
-.info-horas, .date-range-info, .semestre-info {
-    margin: 15px 0;
-    padding: 15px;
-    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-    border-radius: 10px;
-    border-left: 4px solid #667eea;
-    font-size: 0.95rem;
-    line-height: 1.5;
-}
-
 .contador-horas {
     background: #e8f4fd;
     border: 1px solid #bee5eb;
@@ -195,7 +186,74 @@ h4 {
     font-size: 0.9em;
 }
 
-/* Formularios */
+/* ================================================================
+   6. INFORMACIÓN DE PROGRAMAS
+   ================================================================ */
+.programa-info {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #e9ecef;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+}
+
+.programa-info:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.programa-info.limite-excedido {
+    border-color: #dc3545;
+    background: #fff5f5;
+}
+
+/* Barras de progreso */
+.programa-barra {
+    width: 100%;
+    height: 8px;
+    background: #e9ecef;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-top: 10px;
+}
+
+.programa-progreso {
+    height: 100%;
+    background: linear-gradient(135deg, #28a745, #20c997);
+    transition: width 0.5s ease;
+}
+
+.programa-progreso.excedido {
+    background: linear-gradient(135deg, #dc3545, #c82333);
+}
+
+/* ================================================================
+   7. INFORMACIÓN DE FECHAS Y HORAS
+   ================================================================ */
+.info-horas, 
+.date-range-info, 
+.semestre-info {
+    margin: 15px 0;
+    padding: 15px;
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    border-radius: 10px;
+    border-left: 4px solid #667eea;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+#duracion-info {
+    margin: 10px 0;
+    padding: 10px;
+    border-radius: 5px;
+    font-weight: 500;
+}
+
+/* ================================================================
+   8. FORMULARIOS
+   ================================================================ */
 .form-group {
     margin-bottom: 25px;
 }
@@ -243,7 +301,16 @@ form input:focus {
     opacity: 0.7;
 }
 
-/* Contenedores de unidades */
+/* Input específico para horas */
+.horas-input {
+    width: 100px !important;
+    text-align: center;
+    margin: 0 !important;
+}
+
+/* ================================================================
+   9. UNIDADES Y CHECKBOXES
+   ================================================================ */
 .unidades-container {
     border: 2px solid #e9ecef;
     border-radius: 10px;
@@ -318,21 +385,9 @@ form input:focus {
     background: #f8f9fa;
 }
 
-/* Inputs específicos */
-.horas-input {
-    width: 100px !important;
-    text-align: center;
-    margin: 0 !important;
-}
-
-#duracion-info {
-    margin: 10px 0;
-    padding: 10px;
-    border-radius: 5px;
-    font-weight: 500;
-}
-
-/* Botones */
+/* ================================================================
+   10. BOTONES
+   ================================================================ */
 .btn, 
 button[type="submit"],
 form button {
@@ -374,7 +429,38 @@ button:disabled {
     box-shadow: 0 10px 20px rgba(231, 76, 60, 0.3);
 }
 
-/* Tablas */
+/* Botones de navegación */
+.nav-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 40px;
+    padding-top: 30px;
+    border-top: 2px solid #f0f0f0;
+}
+
+.nav-buttons a {
+    background: linear-gradient(135deg, #34495e, #2c3e50);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(52, 73, 94, 0.2);
+}
+
+.nav-buttons a:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(52, 73, 94, 0.3);
+    background: linear-gradient(135deg, #2c3e50, #34495e);
+}
+
+/* ================================================================
+   11. TABLAS
+   ================================================================ */
 .table-container {
     background: white;
     border-radius: 15px;
@@ -440,7 +526,9 @@ table tbody td input[type="number"] {
     padding: 40px;
 }
 
-/* Enlaces de acción */
+/* ================================================================
+   12. ENLACES Y ACCIONES
+   ================================================================ */
 .accion {
     color: #dc3545;
     text-decoration: none;
@@ -455,36 +543,33 @@ table tbody td input[type="number"] {
     color: white;
 }
 
-/* Botones de navegación */
-.nav-buttons {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
-    justify-content: center;
-    margin-top: 40px;
-    padding-top: 30px;
-    border-top: 2px solid #f0f0f0;
+/* ================================================================
+   13. ESTADOS Y UTILIDADES
+   ================================================================ */
+.loading {
+    color: #667eea;
+    font-style: italic;
 }
 
-.nav-buttons a {
-    background: linear-gradient(135deg, #34495e, #2c3e50);
-    color: white;
-    padding: 12px 24px;
-    border-radius: 25px;
-    text-decoration: none;
-    font-weight: 500;
-    font-size: 0.9rem;
-    transition: all 0.3s ease;
-    box-shadow: 0 5px 15px rgba(52, 73, 94, 0.2);
+/* ================================================================
+   14. ANIMACIONES
+   ================================================================ */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
-.nav-buttons a:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 20px rgba(52, 73, 94, 0.3);
-    background: linear-gradient(135deg, #2c3e50, #34495e);
-}
+/* ================================================================
+   15. RESPONSIVE DESIGN
+   ================================================================ */
 
-/* Responsive Design */
+/* Tablets */
 @media (max-width: 768px) {
     body {
         padding: 10px;
@@ -498,7 +583,13 @@ table tbody td input[type="number"] {
         font-size: 1.8rem;
     }
     
-    .section, .form-section, .programas-disponibles {
+    .section, 
+    .form-section, 
+    .programas-disponibles,
+    .disponibilidad-container,
+    .planificacion-container,
+    .programa-container,
+    .horas-container {
         padding: 20px;
     }
     
@@ -525,6 +616,7 @@ table tbody td input[type="number"] {
     }
 }
 
+/* Móviles */
 @media (max-width: 480px) {
     h2 {
         font-size: 1.6rem;
@@ -534,7 +626,13 @@ table tbody td input[type="number"] {
         padding: 20px;
     }
     
-    .section, .form-section, .programas-disponibles {
+    .section, 
+    .form-section, 
+    .programas-disponibles,
+    .disponibilidad-container,
+    .planificacion-container,
+    .programa-container,
+    .horas-container {
         padding: 15px;
     }
     
@@ -552,109 +650,5 @@ table tbody td input[type="number"] {
     
     table {
         min-width: 500px;
-    }
-}
-
-/* Animaciones */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Estados de carga */
-.loading {
-    color: #667eea;
-    font-style: italic;
-}
-
-/* Mejoras de accesibilidad */
-*:focus {
-    outline: 2px solid #667eea;
-    outline-offset: 2px;
-}
-/* Contenedor para la sección de disponibilidad registrada */
-.disponibilidad-container {
-    background: white;
-    padding: 30px;
-    border-radius: 15px;
-    margin-bottom: 20px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-    border: 1px solid #e9ecef;
-    animation: fadeIn 0.6s ease-out;
-}
-
-/* Título dentro del contenedor */
-.disponibilidad-container h3 {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: #2c3e50;
-    margin-bottom: 25px;
-    margin-top: 0;
-    padding-bottom: 10px;
-    border-bottom: 2px solid #e9ecef;
-}
-
-/* Responsive para dispositivos móviles */
-@media (max-width: 768px) {
-    .disponibilidad-container {
-        padding: 20px;
-    }
-}
-
-@media (max-width: 480px) {
-    .disponibilidad-container {
-        padding: 15px;
-    }
-}  
-/* Contenedor para secciones con fondo blanco */
-.disponibilidad-container,
-.planificacion-container,
-.programa-container,
-.horas-container {
-    background: white;
-    padding: 30px;
-    border-radius: 15px;
-    margin-bottom: 20px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-    border: 1px solid #e9ecef;
-    animation: fadeIn 0.6s ease-out;
-}
-
-/* Títulos dentro de los contenedores */
-.disponibilidad-container h3,
-.planificacion-container h3,
-.programa-container h3,
-.horas-container h3 {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: #2c3e50;
-    margin-bottom: 25px;
-    margin-top: 0;
-    padding-bottom: 10px;
-    border-bottom: 2px solid #e9ecef;
-}
-
-/* Responsive para dispositivos móviles */
-@media (max-width: 768px) {
-    .disponibilidad-container,
-    .planificacion-container,
-    .programa-container,
-    .horas-container {
-        padding: 20px;
-    }
-}
-
-@media (max-width: 480px) {
-    .disponibilidad-container,
-    .planificacion-container,
-    .programa-container,
-    .horas-container {
-        padding: 15px;
     }
 }
