@@ -241,7 +241,7 @@ foreach ($semestre_fechas as $fechas) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro de Evaluaciones</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="style.css">
     <script>
         function cargarUnidades(programaId) {
             // Ocultar todas las secciones de unidades
