@@ -1,7 +1,7 @@
 <?php
 // funciona completamente
 
-require_once '..\config.php';
+require_once '../config.php';
 session_start();
 
 // Verificar si hay sesión de administrador
@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         
         <button type="submit">Registrar Usuario</button>
     </form>
-    <a href="p_admin.html">Volver al menú</a>
+    <a href="p_admin.php">Volver al menú</a>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {

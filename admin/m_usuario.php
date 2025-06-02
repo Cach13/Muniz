@@ -1,5 +1,5 @@
 <?php
-require_once '..\config.php';
+require_once '../config.php';
 session_start();
 if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] != 'admin') {
     header('Location: ../index.php');
@@ -92,7 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <button type="submit">Modificar Usuario</button>
     </form>
 
-    <a href="p_admin.html">Volver a Opciones de Admin</a>
+    <a href="p_admin.php">Volver a Opciones de Admin</a>
 
     <script>
         document.querySelector("form").addEventListener("submit", function(e) {

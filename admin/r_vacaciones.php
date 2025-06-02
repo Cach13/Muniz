@@ -1,5 +1,5 @@
 <?php
-require_once '..\\config.php';
+require_once '../config.php';
 session_start();
 if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] != 'admin') {
     header('Location: ../index.php');
@@ -146,7 +146,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <button type="submit">Registrar Vacaciones</button>
     </form>
     
-    <a href="p_admin.html">Volver al menú</a>
+    <a href="p_admin.php">Volver al menú</a>
     
     <script>
         // Inicializar la validación al cargar la página
