@@ -1,42 +1,66 @@
-/* Variables CSS para consistencia - Diseño Moderno con Fondo Legible */
+/* =============================================================================
+   SISTEMA DE DISEÑO MODERNO - CSS OPTIMIZADO
+   =============================================================================
+   
+   Características principales:
+   - Variables CSS para consistencia y mantenimiento
+   - Glassmorphism y gradientes modernos
+   - Sistema de componentes reutilizables
+   - Diseño responsive mobile-first OPTIMIZADO
+   - Animaciones suaves y microinteracciones
+   - Máximo aprovechamiento del espacio en móviles
+   
+   ============================================================================= */
+
+/* =============================================================================
+   1. VARIABLES CSS - SISTEMA DE TOKENS DE DISEÑO
+   ============================================================================= */
+
 :root {
-  --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  /* Gradientes principales */
+  --primary-gradient: linear-gradient(135deg, #540ecd 0%, #764ba2 100%);
   --secondary-gradient: linear-gradient(135deg, #374151, #1f2937);
   --success-gradient: linear-gradient(135deg, #10b981, #059669);
   --danger-gradient: linear-gradient(135deg, #ef4444, #dc2626);
   --warning-gradient: linear-gradient(135deg, #f59e0b, #d97706);
-  --primary-color: #667eea;
-  --primary-hover: #5a6fd8;
+  --bg-main: linear-gradient(135deg, #969cb4 0%, #764ba2 100%);
+  
+  /* Colores sólidos */
+  --primary-color: #540ecd;
+  --success-color: #10b981;
+  --danger-color: #ef4444;
+  --warning-color: #f59e0b;
+  
+  /* Sistema de tipografía */
   --text-primary: #1f2937;
   --text-secondary: #6b7280;
   --text-muted: #9ca3af;
+  
+  /* Fondos con glassmorphism */
   --bg-glass: rgba(255, 255, 255, 0.95);
   --bg-card: rgba(255, 255, 255, 0.9);
+  --bg-subtle: #f9fafb;
+  
+  /* Bordes y sombras */
   --border-glass: rgba(255, 255, 255, 0.2);
   --border-color: rgba(229, 231, 235, 0.8);
   --shadow-glass: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   --shadow-hover: 0 8px 16px -4px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  
+  /* Border radius */
   --radius: 12px;
   --radius-lg: 24px;
+  --radius-sm: 6px;
+  
+  /* Transiciones */
   --transition: all 0.2s ease;
-  
-  /* Fondo principal más claro y legible */
-  --bg-main: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e1 100%);
-  
-  /* Variables adicionales para compatibilidad */
-  --primary-light: #dbeafe;
-  --accent-color: #e2e8f0;
-  --danger-color: #ef4444;
-  --danger-hover: #dc2626;
-  --success-color: #10b981;
-  --success-hover: #059669;
-  --bg-subtle: #f9fafb;
-  --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-  --radius-sm: 0.375rem;
+  --transition-slow: all 0.3s ease;
 }
+
+/* =============================================================================
+   2. RESET Y ESTILOS BASE
+   ============================================================================= */
 
 * {
   margin: 0;
@@ -44,7 +68,6 @@
   box-sizing: border-box;
 }
 
-/* ===== ESTILOS BASE BODY ===== */
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   background: var(--bg-main);
@@ -53,42 +76,40 @@ body {
   min-height: 100vh;
 }
 
-/* Body para páginas generales (formularios, tablas) */
-body.general-page {
+/* Variantes de layout para body */
+.general-page { 
   padding: 2rem 1rem;
-  margin: 0;
+  min-height: 100vh;
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
 }
-
-/* Body para páginas centradas (login, menú) */
-body.centered-page {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1rem;
+.centered-page { 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  padding: 1rem; 
+  min-height: 100vh;
+  width: 100%;
 }
+.gradient-bg { background: var(--primary-gradient); }
 
-/* Body para páginas con fondo gradiente (acciones, formularios) */
-body.gradient-bg {
-  background: var(--primary-gradient);
-}
+/* =============================================================================
+   3. TIPOGRAFÍA
+   ============================================================================= */
 
-/* ===== TÍTULOS ===== */
 h1, h2 {
   color: var(--text-primary);
   font-weight: 700;
   text-align: center;
   letter-spacing: -0.025em;
-}
-
-h1 {
-  font-size: 2rem;
   margin-bottom: 2.5rem;
 }
+
+h1 { font-size: 2rem; }
 
 h2 {
-  margin-bottom: 2.5rem;
   font-size: 2rem;
-  /* Título con gradiente para mejor impacto visual */
   background: var(--primary-gradient);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -96,29 +117,39 @@ h2 {
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* Alternativa para títulos con mejor contraste */
-h2.solid-title, h1.solid-title {
-  color: var(--text-primary);
-  background: none;
-  -webkit-text-fill-color: var(--text-primary);
-  text-shadow: none;
+/* Títulos con contraste sólido cuando se necesite legibilidad */
+.solid-title {
+  color: var(--text-primary) !important;
+  background: none !important;
+  -webkit-text-fill-color: var(--text-primary) !important;
+  text-shadow: none !important;
 }
 
-/* ===== FORMULARIOS ===== */
-form {
+/* =============================================================================
+   4. SISTEMA DE COMPONENTES GLASS
+   ============================================================================= */
+
+/* Mixin base para efecto glass (clases que comparten estilos) */
+.glass-container,
+form,
+.login-container,
+.menu-container,
+.table-container {
   background: var(--bg-glass);
   backdrop-filter: blur(20px);
-  padding: 3rem 2.5rem;
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-glass);
-  max-width: 700px;
-  margin: 0 auto;
   border: 1px solid var(--border-glass);
   position: relative;
   overflow: hidden;
 }
 
-form::before {
+/* Línea decorativa superior para containers glass */
+.glass-container::before,
+form::before,
+.login-container::before,
+.menu-container::before,
+.table-container::before {
   content: '';
   position: absolute;
   top: 0;
@@ -127,6 +158,17 @@ form::before {
   height: 4px;
   background: var(--primary-gradient);
   border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
+/* =============================================================================
+   5. FORMULARIOS
+   ============================================================================= */
+
+form {
+  padding: 3rem 2.5rem;
+  max-width: 700px;
+  width: 100%;
+  margin: 0 auto;
 }
 
 .form-group {
@@ -143,7 +185,7 @@ form::before {
   letter-spacing: 0.05em;
 }
 
-/* ===== CAMPOS DE ENTRADA ===== */
+/* Campos de entrada unificados */
 input, select, textarea {
   width: 100%;
   padding: 1rem 1.25rem;
@@ -170,6 +212,7 @@ input::placeholder, textarea::placeholder {
   font-weight: 400;
 }
 
+/* Estilos específicos */
 textarea {
   resize: vertical;
   min-height: 140px;
@@ -186,13 +229,14 @@ select {
   appearance: none;
 }
 
-/* ===== BOTONES ===== */
-.button-group {
-  display: flex;
-  gap: 1rem;
-  margin-top: 2.5rem;
-  flex-wrap: wrap;
-}
+/* Estados de validación */
+.valid { border-color: var(--success-color) !important; }
+.invalid { border-color: var(--danger-color) !important; }
+.warning { border-color: var(--warning-color) !important; }
+
+/* =============================================================================
+   6. SISTEMA DE BOTONES
+   ============================================================================= */
 
 button {
   padding: 1rem 1.5rem;
@@ -206,29 +250,15 @@ button {
   transition: var(--transition);
   display: inline-flex;
   align-items: center;
-  gap: 0.75rem;
-  flex: 1;
   justify-content: center;
+  gap: 0.75rem;
   min-width: 140px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-md);
   position: relative;
   overflow: hidden;
 }
 
-/* Botón único (no en grupo) */
-button.single-button {
-  flex: none;
-  padding: 1rem 2rem;
-  font-size: 1rem;
-  margin-top: 1rem;
-}
-
-/* Botón de ancho completo */
-button.full-width {
-  width: 100%;
-  flex: none;
-}
-
+/* Efecto shimmer en hover */
 button::before {
   content: '';
   position: absolute;
@@ -245,74 +275,93 @@ button:hover {
   box-shadow: var(--shadow-hover);
 }
 
-button:hover::before {
-  left: 100%;
-}
-
-button:active {
-  transform: translateY(-1px);
-}
+button:hover::before { left: 100%; }
+button:active { transform: translateY(-1px); }
 
 /* Variantes de botones */
-button.eliminar, button.danger {
-  background: var(--danger-gradient);
+.btn-danger { background: var(--danger-gradient); }
+.btn-secondary { background: var(--secondary-gradient); }
+.btn-success { background: var(--success-gradient); }
+.btn-warning { background: var(--warning-gradient); }
+
+/* Modificadores de tamaño */
+.btn-full { width: 100%; flex: none; }
+.btn-single { flex: none; padding: 1rem 2rem; font-size: 1rem; }
+
+/* Grupo de botones */
+.button-group {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2.5rem;
+  flex-wrap: wrap;
 }
 
-button.secondary {
-  background: var(--secondary-gradient);
-}
+.button-group button { flex: 1; }
 
-button.success {
-  background: var(--success-gradient);
-}
+/* =============================================================================
+   7. MENSAJES DE ESTADO UNIFICADOS
+   ============================================================================= */
 
-button.warning {
-  background: var(--warning-gradient);
-}
-
-/* ===== ENLACES ===== */
-a {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-top: 2rem;
-  color: var(--primary-color);
-  text-decoration: none;
-  font-weight: 600;
-  transition: var(--transition);
-  padding: 0.75rem 1rem;
+.mensaje {
+  padding: 1rem 1.25rem;
+  margin: 1.5rem 0;
   border-radius: var(--radius);
-  background: rgba(102, 126, 234, 0.1);
+  font-weight: 500;
   backdrop-filter: blur(10px);
-}
-
-a:hover {
-  background: rgba(102, 126, 234, 0.15);
-  transform: translateX(-2px);
-}
-
-/* ===== TABLAS ===== */
-.table-container {
-  background: var(--bg-glass);
-  backdrop-filter: blur(20px);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-glass);
-  overflow: hidden;
-  margin: 2rem auto;
-  max-width: 1000px;
-  border: 1px solid var(--border-glass);
+  border-left: 4px solid;
+  animation: slideInMessage 0.5s ease-out;
   position: relative;
 }
 
-.table-container::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: var(--primary-gradient);
-  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+@keyframes slideInMessage {
+  from { opacity: 0; transform: translateY(-15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Iconos automáticos */
+.mensaje::before {
+  font-weight: bold;
+  margin-right: 8px;
+}
+
+/* Variantes de mensaje */
+.mensaje.success, .mensaje.exito {
+  background: rgba(16, 185, 129, 0.1);
+  color: #059669;
+  border-left-color: var(--success-color);
+}
+.mensaje.success::before, .mensaje.exito::before { content: "✅ "; }
+
+.mensaje.error, .mensaje.danger {
+  background: rgba(239, 68, 68, 0.1);
+  color: #dc2626;
+  border-left-color: var(--danger-color);
+}
+.mensaje.error::before, .mensaje.danger::before { content: "❌ "; }
+
+.mensaje.warning, .mensaje.alerta {
+  background: rgba(245, 158, 11, 0.1);
+  color: #d97706;
+  border-left-color: var(--warning-color);
+}
+.mensaje.warning::before, .mensaje.alerta::before { content: "⚠️ "; }
+
+.mensaje.info {
+  background: rgba(59, 130, 246, 0.1);
+  color: #1d4ed8;
+  border-left-color: #3b82f6;
+}
+.mensaje.info::before { content: "ℹ️ "; }
+
+/* =============================================================================
+   8. TABLAS
+   ============================================================================= */
+
+.table-container {
+  margin: 2rem auto;
+  max-width: 1000px;
+  width: 100%;
+  overflow-x: auto;
 }
 
 table {
@@ -346,107 +395,36 @@ tr:hover {
   transform: translateX(2px);
 }
 
-tr:last-child td {
-  border-bottom: none;
-}
+tr:last-child td { border-bottom: none; }
 
-/* ===== MENSAJES DE ESTADO ===== */
-.mensaje {
-  padding: 1rem 1.25rem;
-  margin-bottom: 1.5rem;
-  border-radius: var(--radius);
-  font-weight: 500;
-  backdrop-filter: blur(10px);
-}
+/* =============================================================================
+   9. CONTENEDORES ESPECIALIZADOS
+   ============================================================================= */
 
-.mensaje.exito {
-  background: rgba(16, 185, 129, 0.1);
-  color: #059669;
-  border: 1px solid rgba(16, 185, 129, 0.2);
-}
-
-.mensaje.error {
-  background: rgba(239, 68, 68, 0.1);
-  color: #dc2626;
-  border: 1px solid rgba(239, 68, 68, 0.2);
-}
-
-/* ===== CONTENEDOR DE LOGIN ===== */
+/* Login */
 .login-container {
-  background: var(--bg-glass);
-  backdrop-filter: blur(20px);
-  border-radius: var(--radius-lg);
   padding: 3rem 2.5rem;
   width: 100%;
   max-width: 420px;
-  box-shadow: var(--shadow-glass);
-  border: 1px solid var(--border-glass);
-  position: relative;
-  overflow: hidden;
   margin: 0 auto;
-}
-
-.login-container::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: var(--primary-gradient);
-  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
 }
 
 .login-container h2 {
   margin-bottom: 2.5rem;
   text-align: center;
-  color: var(--text-primary);
-  font-size: 2rem;
-  font-weight: 700;
-  background: var(--primary-gradient);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  letter-spacing: -0.025em;
 }
 
 .login-container input {
   margin-bottom: 1.5rem;
 }
 
-/* ===== CONTENEDOR DE MENÚ ===== */
+/* Menú */
 .menu-container {
-  background: var(--bg-glass);
-  backdrop-filter: blur(20px);
   padding: 3rem 2rem;
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-glass);
   text-align: center;
   width: 100%;
   max-width: 450px;
-  border: 1px solid var(--border-glass);
-  position: relative;
-  overflow: hidden;
   margin: 0 auto;
-}
-
-.menu-container::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: var(--primary-gradient);
-  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-}
-
-.menu-container h1 {
-  margin-bottom: 2.5rem;
-  color: var(--text-primary);
-  font-size: 2rem;
-  font-weight: 700;
-  letter-spacing: -0.025em;
 }
 
 .menu-container a {
@@ -460,67 +438,137 @@ tr:last-child td {
   font-weight: 500;
   font-size: 0.875rem;
   transition: var(--transition);
-  position: relative;
-  overflow: hidden;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-md);
 }
 
 .menu-container a:hover {
-  background: var(--primary-hover);
   transform: translateY(-1px);
   box-shadow: var(--shadow-hover);
 }
 
-.menu-container a:active {
-  transform: translateY(0);
+/* Colores específicos para enlaces del menú */
+.menu-container a:nth-child(2) { background: var(--success-gradient); }
+.menu-container a:nth-child(3) { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+.menu-container a:nth-child(4) { background: var(--warning-gradient); }
+
+/* =============================================================================
+   10. ENLACES Y NAVEGACIÓN
+   ============================================================================= */
+
+a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin: 2rem auto 0 auto;
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 600;
+  transition: var(--transition);
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius);
+  background: rgba(102, 126, 234, 0.1);
+  backdrop-filter: blur(10px);
+  text-align: center;
+  width: fit-content;
+  max-width: 200px;
 }
 
-/* Colores específicos para diferentes enlaces del menú */
-.menu-container a:nth-child(2) {
-  background: var(--success-gradient);
+a:hover {
+  background: rgba(102, 126, 234, 0.15);
+  transform: translateY(-2px);
 }
 
-.menu-container a:nth-child(3) {
-  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+/* =============================================================================
+   11. UTILIDADES
+   ============================================================================= */
+
+/* Layout */
+.text-center { text-align: center; }
+.flex { display: flex; }
+.flex-center { display: flex; align-items: center; justify-content: center; }
+.hidden { display: none !important; }
+
+/* Espaciado */
+.mt-2 { margin-top: 2rem; }
+.mb-2 { margin-bottom: 2rem; }
+.gap-1 { gap: 1rem; }
+
+/* Utilidades para centrado */
+.center-link {
+  display: block;
+  text-align: center;
+  width: 100%;
 }
 
-.menu-container a:nth-child(4) {
-  background: var(--warning-gradient);
+.center-link a {
+  margin: 2rem auto 0 auto;
 }
 
-/* ===== RESPONSIVE DESIGN ===== */
-@media (max-width: 640px) {
-  body.general-page {
-    padding: 1rem 0.75rem;
+/* Tamaños */
+.w-full { width: 100%; }
+.max-w-md { max-width: 28rem; }
+.max-w-lg { max-width: 32rem; }
+.max-w-xl { max-width: 36rem; }
+
+/* =============================================================================
+   12. RESPONSIVE DESIGN OPTIMIZADO - MÁXIMO APROVECHAMIENTO DEL ESPACIO
+   ============================================================================= */
+
+/* Tablet - Optimizado */
+@media (max-width: 1024px) {
+  .general-page { 
+    padding: 1rem 0.75rem; 
+  }
+  
+  form, .login-container, .menu-container {
+    max-width: 95%;
+    width: 95%;
+    margin: 1rem auto;
+  }
+  
+  .table-container {
+    max-width: 98%;
+    padding: 0 0.75rem;
+  }
+}
+
+/* Mobile - Primera optimización */
+@media (max-width: 768px) {
+  .general-page { 
+    padding: 0.75rem 0.5rem; 
+    min-height: 100vh;
+  }
+  
+  /* Para páginas centradas, cambiar comportamiento en móviles */
+  .centered-page {
+    padding: 0.5rem;
+    align-items: flex-start;
+    padding-top: 2rem;
   }
   
   form, .login-container, .menu-container {
     padding: 2rem 1.5rem;
-    margin: 1rem auto;
+    margin: 0.75rem auto;
+    width: calc(100% - 1rem); /* Usa casi todo el ancho disponible */
+    max-width: none; /* Elimina restricciones de ancho máximo */
   }
   
-  h1, h2, .menu-container h1 {
+  h1, h2 {
     font-size: 1.75rem;
-    margin-bottom: 2rem;
+    margin-bottom: 1.75rem;
   }
   
   .button-group {
     flex-direction: column;
+    width: 100%;
+    margin-top: 2rem;
   }
   
-  button {
+  .button-group button,
+  .btn-single {
+    width: 100%;
     flex: none;
-    width: 100%;
-  }
-  
-  button.single-button {
-    width: 100%;
-    justify-content: center;
-    padding: 1rem;
-  }
-  
-  .table-container {
-    margin: 1rem auto;
   }
   
   th, td {
@@ -529,77 +577,190 @@ tr:last-child td {
   }
 
   input, select, textarea {
-    padding: 0.875rem 1rem;
+    padding: 1rem;
+    width: 100%;
   }
   
-  .menu-container a {
-    padding: 0.875rem 1.25rem;
+  a {
+    width: fit-content;
+    max-width: 200px;
+    padding: 0.75rem 1rem;
     font-size: 0.875rem;
   }
 }
 
+/* Mobile pequeño - Máximo aprovechamiento del espacio */
 @media (max-width: 480px) {
-  .login-container {
-    padding: 2.5rem 2rem;
-    margin: 1rem;
+  .general-page {
+    padding: 0.5rem 0.25rem; /* Padding mínimo para maximizar espacio */
   }
   
-  .login-container h2 {
-    font-size: 1.75rem;
+  .centered-page {
+    padding: 0.25rem;
+    padding-top: 1rem;
+  }
+  
+  .login-container, .menu-container {
+    padding: 1.5rem 1.25rem;
+    margin: 0.5rem auto;
+    width: calc(100% - 0.5rem); /* Usa prácticamente todo el ancho */
+  }
+  
+  form {
+    padding: 1.5rem 1.25rem;
+    width: calc(100% - 0.5rem); /* Formulario ocupa casi toda la pantalla */
+    margin: 0.5rem auto;
+  }
+  
+  .login-container h2, h1, h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1.25rem;
   }
 
-  .login-container input {
-    padding: 0.875rem 1rem;
+  input, select, textarea, button {
+    padding: 1rem;
+    width: 100%;
   }
 
-  .login-container button {
-    padding: 0.875rem 1rem;
+  .mensaje {
+    margin: 1rem 0;
+    padding: 1rem;
+    font-size: 0.875rem;
+  }
+  
+  .table-container {
+    margin: 0.75rem auto;
+    width: calc(100% - 0.5rem);
+    padding: 0 0.25rem;
+  }
+  
+  th, td {
+    padding: 0.875rem 0.5rem;
+    font-size: 0.8rem;
+  }
+  
+  a {
+    width: fit-content;
+    max-width: 180px;
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+    margin: 1.5rem auto 0 auto;
   }
 }
 
-/* ===== CLASES UTILITARIAS ===== */
-.text-center {
-  text-align: center;
+/* Pantallas muy pequeñas - Aprovechamiento total */
+@media (max-width: 360px) {
+  .general-page {
+    padding: 0.25rem 0.125rem; /* Padding prácticamente eliminado */
+  }
+  
+  form, .login-container, .menu-container {
+    padding: 1.25rem 1rem;
+    width: calc(100% - 0.25rem); /* Ocupa casi toda la pantalla */
+    margin: 0.25rem auto;
+    border-radius: 16px; /* Radio menor para aprovechar más espacio */
+  }
+  
+  /* Ajustar el radio de la línea decorativa también */
+  form::before, .login-container::before, .menu-container::before {
+    border-radius: 16px 16px 0 0;
+  }
+  
+  h1, h2 {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+  }
+  
+  input, select, textarea, button {
+    padding: 0.875rem;
+    font-size: 0.875rem;
+  }
+  
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+  
+  .mensaje {
+    margin: 0.75rem 0;
+    padding: 0.875rem;
+  }
 }
 
-.mt-2 {
-  margin-top: 2rem;
+/* Clase específica para pantallas muy pequeñas - uso opcional */
+@media (max-width: 320px) {
+  .general-page {
+    padding: 0.125rem;
+  }
+  
+  form, .login-container, .menu-container {
+    width: calc(100% - 0.125rem);
+    padding: 1rem 0.875rem;
+    margin: 0.125rem auto;
+    border-radius: 12px;
+  }
+  
+  form::before, .login-container::before, .menu-container::before {
+    border-radius: 12px 12px 0 0;
+  }
+  
+  h1, h2 {
+    font-size: 1.125rem;
+  }
+  
+  input, select, textarea, button {
+    padding: 0.75rem;
+    font-size: 0.8rem;
+  }
 }
 
-.mb-2 {
-  margin-bottom: 2rem;
+/* =============================================================================
+   13. CLASES ADICIONALES PARA CONTROL ESPECÍFICO
+   ============================================================================= */
+
+/* Clase para formularios que deben ocupar el 100% en móviles */
+@media (max-width: 768px) {
+  .form-full-mobile {
+    width: 100% !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+  }
+  
+  .form-full-mobile::before {
+    border-radius: 0 !important;
+  }
 }
 
-.hidden {
-  display: none !important;
+/* Clase para eliminar márgenes en móviles */
+@media (max-width: 480px) {
+  .no-margin-mobile {
+    margin: 0 !important;
+  }
+  
+  .minimal-padding-mobile {
+    padding: 1rem !important;
+  }
 }
 
-.flex {
-  display: flex;
+/* Modo pantalla completa en móviles (opcional) */
+@media (max-width: 768px) {
+  .fullscreen-mobile {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    overflow-y: auto;
+  }
+  
+  .fullscreen-mobile::before {
+    border-radius: 0 !important;
+  }
 }
 
-.flex-center {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.gap-1 {
-  gap: 1rem;
-}
-
-.w-full {
-  width: 100%;
-}
-
-.max-w-md {
-  max-width: 28rem;
-}
-
-.max-w-lg {
-  max-width: 32rem;
-}
-
-.max-w-xl {
-  max-width: 36rem;
-}
+/* =============================================================================
+   FIN DEL ARCHIVO CSS
+   ============================================================================= */

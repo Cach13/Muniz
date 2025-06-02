@@ -57,7 +57,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         
         <button type="submit">Registrar Fechas</button>
     </form>
-    <a href="p_admin.php">Volver al menú</a>
+     <div class="center-link">
+    <a href="p_admin.php">← Volver al inicio</a>
+</div>
 
     <script>
         // Inicializar la validación al cargar la página

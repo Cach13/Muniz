@@ -241,7 +241,7 @@ function calcularDuracionHoras($hora_inicio, $hora_fin) {
 <head>
     <meta charset="UTF-8">
     <title>Registro de Disponibilidad</title>
-    <link rel="stylesheet" href="css/styles_u.css">
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <h2>Registro de Disponibilidad</h2>
@@ -332,6 +332,7 @@ function calcularDuracionHoras($hora_inicio, $hora_fin) {
         </form>
     </div>
     
+    <div class="disponibilidad-container">
     <h3>Disponibilidad Registrada</h3>
     <?php if (!empty($disponibilidad)): ?>
         <table>
@@ -370,10 +371,8 @@ function calcularDuracionHoras($hora_inicio, $hora_fin) {
                 <?php endforeach; ?>
             </tbody>
         </table>
-    <?php else: ?>
-        <p>No hay disponibilidad registrada.</p>
     <?php endif; ?>
-    
+</div>
     <div class="nav-buttons">
         <a href="r_planificacion.php">Ir a Planificación</a>
         <a href="r_evaluaciones.php">Ir a Evaluaciones</a>

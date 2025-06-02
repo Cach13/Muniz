@@ -57,7 +57,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <button type="submit" class="eliminar">Eliminar Usuario</button>
     </form>
 
-    <a href="p_admin.php">Volver a Opciones de Admin</a>
+     <div class="center-link">
+    <a href="p_admin.php">← Volver al inicio</a>
+</div>
 
     <script>
         document.querySelector("form").addEventListener("submit", function(e) {

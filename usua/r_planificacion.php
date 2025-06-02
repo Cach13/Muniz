@@ -150,137 +150,153 @@ if (!empty($temas)) {
 <head>
     <meta charset="UTF-8">
     <title>Planificación de Estudios</title>
-    <link rel="stylesheet" href="css/styles_u.css">
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <h2>Planificación de Estudios</h2>
-    
-    <?php if ($mensaje): ?>
-    <div class="mensaje <?php echo $tipo_mensaje; ?>">
-        <?php echo $mensaje; ?>
-    </div>
-    <?php endif; ?>
-    
-    <h3>Seleccionar Programa</h3>
-    <form method="POST">
-        <select name="programa_seleccionado" required>
-            <option value="">Seleccione un programa</option>
-            <?php foreach ($programas as $programa): ?>
-                <option value="<?php echo $programa['id_programa']; ?>"
-                    <?php echo (isset($_POST['programa_seleccionado']) && $_POST['programa_seleccionado'] == $programa['id_programa']) ? 'selected' : ''; ?>>
-                    <?php echo htmlspecialchars($programa['nombre_materia']); ?>
-                    (<?php echo $programa['horas_teoricas'] + $programa['horas_practicas']; ?> horas)
-                </option>
-            <?php endforeach; ?>
-        </select>
-        <button type="submit" name="ver_programa">Ver Programa</button>
-    </form>
-    
-    <?php if (!empty($unidades)): ?>
-        <h3>Definir Horas Estimadas</h3>
-        <?php if ($horas_totales_programa > 0): ?>
-            <div class="info-horas">
-                <p>Horas totales para este programa: <strong><?php echo $horas_totales_programa; ?> horas</strong></p>
-                <p>Las horas planeadas para todos los temas no deben exceder este límite.</p>
-            </div>
-        <?php endif; ?>
-        
-        <form method="POST" id="form-planificacion">
-            <input type="hidden" name="programa_seleccionado" value="<?php echo $id_programa_seleccionado; ?>">
-            
-            <?php 
-            // Variable para calcular la suma actual de horas planeadas
-            $suma_actual = 0;
-            foreach ($planificaciones as $horas) {
-                $suma_actual += floatval($horas);
-            }
-            ?>
-            
-            <div class="contador-horas">
-                <p>Horas planeadas: <span id="horas-actuales"><?php echo $suma_actual; ?></span> de <?php echo $horas_totales_programa; ?></p>
+    <div class="container">
+        <div class="main-card">
+            <div class="header">
+                <h2>Planificación de Estudios</h2>
             </div>
             
-            <?php foreach ($unidades as $unidad): ?>
-                <div class="unidad-header">Unidad <?php echo $unidad['numero_unidad']; ?>: <?php echo htmlspecialchars($unidad['nombre_unidad']); ?></div>
-                <?php if (isset($temas[$unidad['id_unidad']])): ?>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Tema</th>
-                                <th>Horas Estimadas</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($temas[$unidad['id_unidad']] as $tema): ?>
-                                <tr>
-                                    <td><?php echo htmlspecialchars($tema['nombre_tema']); ?></td>
-                                    <td>
-                                        <input type="number" class="horas-input" name="tema[<?php echo $tema['id_tema']; ?>]" min="0" step="0.5" 
-                                            value="<?php echo isset($planificaciones[$tema['id_tema']]) ? $planificaciones[$tema['id_tema']] : ''; ?>">
-                                    </td>
-                                </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                <?php else: ?>
-                    <p>No hay temas registrados para esta unidad.</p>
-                <?php endif; ?>
-            <?php endforeach; ?>
-            <button type="submit" name="registrar_horas">Guardar Horas Estimadas</button>
-        </form>
-        
-        <script>
-            // JavaScript para actualizar dinámicamente el contador de horas
-            document.addEventListener('DOMContentLoaded', function() {
-                const horasInputs = document.querySelectorAll('.horas-input');
-                const horasActualesSpan = document.getElementById('horas-actuales');
-                const horasTotales = <?php echo $horas_totales_programa; ?>;
-                const formPlanificacion = document.getElementById('form-planificacion');
-                
-                horasInputs.forEach(input => {
-                    input.addEventListener('input', actualizarContadorHoras);
-                });
-                
-                formPlanificacion.addEventListener('submit', function(e) {
-                    const totalHoras = calcularTotalHoras();
-                    if (totalHoras > horasTotales) {
-                        e.preventDefault();
-                        alert('Error: Las horas totales planeadas (' + totalHoras + ') exceden el límite permitido para este programa (' + horasTotales + ' horas). Por favor, ajuste su planificación.');
-                    }
-                });
-                
-                function actualizarContadorHoras() {
-                    const totalHoras = calcularTotalHoras();
-                    horasActualesSpan.textContent = totalHoras;
+            <?php if ($mensaje): ?>
+            <div class="mensaje <?php echo $tipo_mensaje; ?>">
+                <?php echo $mensaje; ?>
+            </div>
+            <?php endif; ?>
+            
+            <!-- Contenedor para selección de programa -->
+            <div class="programa-container">
+                <h3>Seleccionar Programa</h3>
+                <form method="POST">
+                    <select name="programa_seleccionado" required>
+                        <option value="">Seleccione un programa</option>
+                        <?php foreach ($programas as $programa): ?>
+                            <option value="<?php echo $programa['id_programa']; ?>"
+                                <?php echo (isset($_POST['programa_seleccionado']) && $_POST['programa_seleccionado'] == $programa['id_programa']) ? 'selected' : ''; ?>>
+                                <?php echo htmlspecialchars($programa['nombre_materia']); ?>
+                                (<?php echo $programa['horas_teoricas'] + $programa['horas_practicas']; ?> horas)
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                    <button type="submit" name="ver_programa">Ver Programa</button>
+                </form>
+            </div>
+            
+            <?php if (!empty($unidades)): ?>
+                <!-- Contenedor para definir horas estimadas -->
+                <div class="horas-container">
+                    <h3>Definir Horas Estimadas</h3>
+                    <?php if ($horas_totales_programa > 0): ?>
+                        <div class="info-horas">
+                            <p>Horas totales para este programa: <strong><?php echo $horas_totales_programa; ?> horas</strong></p>
+                            <p>Las horas planeadas para todos los temas no deben exceder este límite.</p>
+                        </div>
+                    <?php endif; ?>
                     
-                    // Cambiar color si excede el límite
-                    if (totalHoras > horasTotales) {
-                        horasActualesSpan.style.color = 'red';
-                    } else {
-                        horasActualesSpan.style.color = 'inherit';
-                    }
-                }
+                    <form method="POST" id="form-planificacion">
+                        <input type="hidden" name="programa_seleccionado" value="<?php echo $id_programa_seleccionado; ?>">
+                        
+                        <?php 
+                        // Variable para calcular la suma actual de horas planeadas
+                        $suma_actual = 0;
+                        foreach ($planificaciones as $horas) {
+                            $suma_actual += floatval($horas);
+                        }
+                        ?>
+                        
+                        <div class="contador-horas">
+                            <p>Horas planeadas: <span id="horas-actuales"><?php echo $suma_actual; ?></span> de <?php echo $horas_totales_programa; ?></p>
+                        </div>
+                        
+                        <?php foreach ($unidades as $unidad): ?>
+                            <div class="unidad-header">Unidad <?php echo $unidad['numero_unidad']; ?>: <?php echo htmlspecialchars($unidad['nombre_unidad']); ?></div>
+                            <?php if (isset($temas[$unidad['id_unidad']])): ?>
+                                <div class="table-container">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>Tema</th>
+                                                <th>Horas Estimadas</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php foreach ($temas[$unidad['id_unidad']] as $tema): ?>
+                                                <tr>
+                                                    <td><?php echo htmlspecialchars($tema['nombre_tema']); ?></td>
+                                                    <td>
+                                                        <input type="number" class="horas-input" name="tema[<?php echo $tema['id_tema']; ?>]" min="0" step="0.5" 
+                                                            value="<?php echo isset($planificaciones[$tema['id_tema']]) ? $planificaciones[$tema['id_tema']] : ''; ?>">
+                                                    </td>
+                                                </tr>
+                                            <?php endforeach; ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            <?php else: ?>
+                                <p class="no-data">No hay temas registrados para esta unidad.</p>
+                            <?php endif; ?>
+                        <?php endforeach; ?>
+                        <button type="submit" name="registrar_horas">Guardar Horas Estimadas</button>
+                    </form>
+                </div>
                 
-                function calcularTotalHoras() {
-                    let total = 0;
-                    horasInputs.forEach(input => {
-                        if (input.value && !isNaN(input.value)) {
-                            total += parseFloat(input.value);
+                <script>
+                    // JavaScript para actualizar dinámicamente el contador de horas
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const horasInputs = document.querySelectorAll('.horas-input');
+                        const horasActualesSpan = document.getElementById('horas-actuales');
+                        const horasTotales = <?php echo $horas_totales_programa; ?>;
+                        const formPlanificacion = document.getElementById('form-planificacion');
+                        
+                        horasInputs.forEach(input => {
+                            input.addEventListener('input', actualizarContadorHoras);
+                        });
+                        
+                        formPlanificacion.addEventListener('submit', function(e) {
+                            const totalHoras = calcularTotalHoras();
+                            if (totalHoras > horasTotales) {
+                                e.preventDefault();
+                                alert('Error: Las horas totales planeadas (' + totalHoras + ') exceden el límite permitido para este programa (' + horasTotales + ' horas). Por favor, ajuste su planificación.');
+                            }
+                        });
+                        
+                        function actualizarContadorHoras() {
+                            const totalHoras = calcularTotalHoras();
+                            horasActualesSpan.textContent = totalHoras;
+                            
+                            // Cambiar color si excede el límite
+                            if (totalHoras > horasTotales) {
+                                horasActualesSpan.style.color = 'red';
+                            } else {
+                                horasActualesSpan.style.color = 'inherit';
+                            }
+                        }
+                        
+                        function calcularTotalHoras() {
+                            let total = 0;
+                            horasInputs.forEach(input => {
+                                if (input.value && !isNaN(input.value)) {
+                                    total += parseFloat(input.value);
+                                }
+                            });
+                            return total;
                         }
                     });
-                    return total;
-                }
-            });
-        </script>
-    <?php elseif (isset($_POST['ver_programa'])): ?>
-        <p>No hay unidades disponibles para este programa.</p>
-    <?php endif; ?>
-    
-    <div class="nav-buttons">
-        <a href="r_disponibilidad.php">Ir a Disponibilidad</a>
-        <a href="r_evaluaciones.php">Ir a Evaluaciones</a>
-        <a href="p_reportes.php">Ir a Reportes</a>
-        <a href="p_usuario.php">Ir a Inicio</a>
+                </script>
+            <?php elseif (isset($_POST['ver_programa'])): ?>
+                <div class="planificacion-container">
+                    <p class="no-data">No hay unidades disponibles para este programa.</p>
+                </div>
+            <?php endif; ?>
+            
+            <div class="nav-buttons">
+                <a href="r_disponibilidad.php">Ir a Disponibilidad</a>
+                <a href="r_evaluaciones.php">Ir a Evaluaciones</a>
+                <a href="gestion_dosificacion.php">Ir a Reportes</a>
+                <a href="p_usuario.php">Ir a Inicio</a>
+            </div>
+        </div>
     </div>
 </body>
 </html>

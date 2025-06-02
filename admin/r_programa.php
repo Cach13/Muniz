@@ -13,6 +13,7 @@ $stmt = $conn->query("SELECT id_semestre, nombre FROM semestres");
 $semestres = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 $mensaje = "";
+$tipo_mensaje = "";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     try {
@@ -83,13 +84,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         
         $conn->commit();
         $mensaje = "Programa registrado exitosamente. Total de horas teóricas: {$horas_teoricas_total}, Total de horas prácticas: {$horas_practicas_total}";
+        $tipo_mensaje = "success";
         
     } catch (Exception $e) {
         $conn->rollBack();
-        $mensaje = "Error: " . $e->getMessage();
+        $mensaje = $e->getMessage();
+        $tipo_mensaje = "error";
     } catch (PDOException $e) {
         $conn->rollBack();
         $mensaje = "Error de base de datos: " . $e->getMessage();
+        $tipo_mensaje = "error";
     }
 }
 ?>
@@ -98,60 +102,78 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registrar Programa Académico</title>
     <link rel="stylesheet" href="css/styles.css">
-    <style>
-        .unidad-container {
-            border: 1px solid #ccc;
-            padding: 15px;
-            margin: 10px 0;
-            border-radius: 5px;
-            background-color: #f9f9f9;
-        }
-        .unidad-header {
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 10px;
-        }
-        .campo-unidad {
-            margin-bottom: 10px;
-        }
-        .campo-unidad label {
-            display: block;
-            margin-bottom: 5px;
-        }
-        .campo-unidad input, .campo-unidad textarea {
-            width: 100%;
-            padding: 5px;
-            border: 1px solid #ddd;
-            border-radius: 3px;
-        }
-        .info-horas {
-            background-color: #e7f3ff;
-            border: 1px solid #b3d9ff;
-            padding: 10px;
-            border-radius: 5px;
-            margin: 10px 0;
-        }
-        .info-horas h4 {
-            margin: 0 0 5px 0;
-            color: #0066cc;
-        }
-        small {
-            display: block;
-            margin-top: 5px;
-            font-style: italic;
-        }
-        .mensaje-validacion {
-            color: #d32f2f;
-            font-size: 12px;
-            margin-top: 5px;
-            padding: 5px;
-            background-color: #ffebee;
-            border-radius: 3px;
-            border-left: 3px solid #d32f2f;
-        }
-    </style>
+    
+</head>
+<body class="general-page">
+    <h2>Registrar Programa Académico</h2>
+
+    <div class="info-horas">
+        <h4>📋 Información sobre las horas</h4>
+        <p>Las horas que ingreses representan las horas semanales. El sistema automáticamente las multiplicará por 16 semanas para calcular el total del semestre.</p>
+    </div>
+
+    <?php if (!empty($mensaje)): ?>
+        <div class="mensaje <?php echo $tipo_mensaje; ?>">
+            <?php echo htmlspecialchars($mensaje); ?>
+        </div>
+    <?php endif; ?>
+
+    <form method="POST" onsubmit="return validarFormulario()">
+        <div class="form-group">
+            <label for="materia">Materia</label>
+            <input type="text" id="materia" name="materia" placeholder="Nombre de la materia" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="horas_teoricas">Horas Teóricas (máximo 5 horas por semana)</label>
+            <input type="number" id="horas_teoricas" name="horas_teoricas" placeholder="Horas Teóricas" 
+                   required min="1" max="5" 
+                   oninput="validarHorasEnTiempoReal(this)" onblur="validarHoras(this)">
+            <small class="help-text">Se multiplicarán por 16 semanas automáticamente</small>
+        </div>
+        
+        <div class="form-group">
+            <label for="horas_practicas">Horas Prácticas (máximo 5 horas por semana)</label>
+            <input type="number" id="horas_practicas" name="horas_practicas" placeholder="Horas Prácticas" 
+                   required min="1" max="5"
+                   oninput="validarHorasEnTiempoReal(this)" onblur="validarHoras(this)">
+            <small class="help-text">Se multiplicarán por 16 semanas automáticamente</small>
+        </div>
+        
+        <div class="form-group">
+            <label for="semestre">Semestre</label>
+            <select id="semestre" name="semestre" required>
+                <option value="">Seleccione un semestre</option>
+                <?php foreach ($semestres as $semestre): ?>
+                    <option value="<?php echo $semestre['id_semestre']; ?>">
+                        <?php echo htmlspecialchars($semestre['nombre']); ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="num_unidades">Número de Unidades</label>
+            <input type="number" id="num_unidades" name="num_unidades" min="1" max="10" 
+                   placeholder="Número de unidades (1-10)" required onchange="mostrarCamposTemas()">
+        </div>
+        
+        <div id="temas_container">
+            <!-- Aquí se generarán dinámicamente los campos para los nombres y temas de cada unidad -->
+        </div>
+        
+        <div class="button-group">
+            <button type="submit" class="success">Registrar Programa</button>
+        </div>
+    </form>
+    
+    <div class="center-link">
+    <a href="p_admin.php">← Volver al inicio</a>
+</div>
+
     <script>
     function mostrarCamposTemas() {
         var numUnidades = document.getElementById('num_unidades').value;
@@ -163,13 +185,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             div.className = 'unidad-container';
             div.innerHTML = `
                 <div class="unidad-header">Unidad ${i}</div>
-                <div class="campo-unidad">
-                    <label>Nombre de la Unidad ${i}:</label>
-                    <input type="text" name="nombre_unidad_${i}" placeholder="Ej: Introducción a la Programación" required>
+                <div class="form-group">
+                    <label for="nombre_unidad_${i}">Nombre de la Unidad ${i}</label>
+                    <input type="text" id="nombre_unidad_${i}" name="nombre_unidad_${i}" 
+                           placeholder="Ej: Introducción a la Programación" required>
                 </div>
-                <div class="campo-unidad">
-                    <label>Temas de la Unidad ${i} (Separados por coma):</label>
-                    <textarea name="temas_unidad_${i}" placeholder="Tema 1, Tema 2, Tema 3..." required rows="3"></textarea>
+                <div class="form-group">
+                    <label for="temas_unidad_${i}">Temas de la Unidad ${i}</label>
+                    <textarea id="temas_unidad_${i}" name="temas_unidad_${i}" 
+                              placeholder="Tema 1, Tema 2, Tema 3..." required rows="3"></textarea>
+                    <small class="help-text">Separa los temas con comas</small>
                 </div>
             `;
             contenedorTemas.appendChild(div);
@@ -239,22 +264,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // Crear nuevo mensaje
         let mensajeDiv = document.createElement('div');
         mensajeDiv.className = 'mensaje-validacion';
-        mensajeDiv.textContent = mensaje;
-        
         if (tipo === 'warning') {
-            mensajeDiv.style.color = '#f57c00';
-            mensajeDiv.style.backgroundColor = '#fff3e0';
-            mensajeDiv.style.borderLeft = '3px solid #f57c00';
-        } else {
-            mensajeDiv.style.color = '#d32f2f';
-            mensajeDiv.style.backgroundColor = '#ffebee';
-            mensajeDiv.style.borderLeft = '3px solid #d32f2f';
+            mensajeDiv.className += ' warning';
         }
-        
-        mensajeDiv.style.fontSize = '12px';
-        mensajeDiv.style.marginTop = '5px';
-        mensajeDiv.style.padding = '5px';
-        mensajeDiv.style.borderRadius = '3px';
+        mensajeDiv.textContent = mensaje;
         
         input.parentNode.appendChild(mensajeDiv);
         
@@ -306,71 +319,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         
         return true;
     }
-    </script>
-</head>
-<body>
-    <h2>Registrar Programa Académico</h2>
 
-    <div class="info-horas">
-        <h4>📋 Información sobre las horas:</h4>
-        <p>Las horas que ingreses representan las horas semanales. El sistema automáticamente las multiplicará por 16 semanas para calcular el total del semestre.</p>
-    </div>
-
-    <?php if (!empty($mensaje)) : ?>
-        <p style="color: <?= strpos($mensaje, 'Error') !== false ? 'red' : 'green' ?>;"><?= $mensaje ?></p>
-    <?php endif; ?>
-
-    <form method="POST" onsubmit="return validarFormulario()">
-        <div>
-            <label>Materia:</label>
-            <input type="text" name="materia" placeholder="Nombre de la materia" required>
-        </div>
-        
-        <div>
-            <label>Horas Teóricas (máximo 5 horas por semana):</label>
-            <input type="number" name="horas_teoricas" placeholder="Horas Teóricas" required min="1" max="5" 
-                   oninput="validarHorasEnTiempoReal(this)" onblur="validarHoras(this)">
-            <small style="color: #666;">Se multiplicarán por 16 semanas automáticamente</small>
-        </div>
-        
-        <div>
-            <label>Horas Prácticas (máximo 5 horas por semana):</label>
-            <input type="number" name="horas_practicas" placeholder="Horas Prácticas" required min="1" max="5"
-                   oninput="validarHorasEnTiempoReal(this)" onblur="validarHoras(this)">
-            <small style="color: #666;">Se multiplicarán por 16 semanas automáticamente</small>
-        </div>
-        
-        <div>
-            <label>Semestre:</label>
-            <select name="semestre" required>
-                <option value="">Seleccione un semestre</option>
-                <?php foreach ($semestres as $semestre): ?>
-                    <option value="<?php echo $semestre['id_semestre']; ?>"><?php echo htmlspecialchars($semestre['nombre']); ?></option>
-                <?php endforeach; ?>
-            </select>
-        </div>
-        
-        <div>
-            <label>Número de Unidades:</label>
-            <input type="number" id="num_unidades" name="num_unidades" min="1" max="10" required onchange="mostrarCamposTemas()">
-        </div>
-        
-        <div id="temas_container">
-            <!-- Aquí se generarán dinámicamente los campos para los nombres y temas de cada unidad -->
-        </div>
-        
-        <button type="submit">Registrar Programa</button>
-    </form>
-    
-    <div style="margin-top: 20px;">
-        <a href="p_admin.php">Volver al menú</a>
-    </div>
-
-    <script>
-        // Inicializar la validación al cargar la página
-        document.addEventListener('DOMContentLoaded', function() {
-            // Si hay alguna función de inicialización, la puedes agregar aquí
-        });
+    // Inicializar la validación al cargar la página
+    document.addEventListener('DOMContentLoaded', function() {
+        // Auto-focus en el primer campo
+        document.getElementById('materia').focus();
+    });
     </script>
 </body>
 </html>
