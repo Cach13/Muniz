@@ -72,17 +72,58 @@ foreach ($temas as $tema) {
     $temas_por_unidad[$tema['id_unidad']][] = $tema;
 }
 
-// Obtener evaluaciones del alumno
-$stmt = $conn->prepare("
-    SELECT e.id_evaluacion, e.fecha_evaluacion, u.nombre_unidad, p.nombre_materia, u.id_unidad, p.id_programa 
-    FROM evaluaciones e
-    JOIN unidades u ON e.id_unidad = u.id_unidad
-    JOIN programas p ON u.id_programa = p.id_programa
-    WHERE e.id_usuario = ?
-    ORDER BY e.fecha_evaluacion DESC
-");
-$stmt->execute([$id_usuario]);
-$evaluaciones = $stmt->fetchAll(PDO::FETCH_ASSOC);
+// Inicializar evaluaciones como array vacío
+$evaluaciones = [];
+
+// Manejar peticiones AJAX para filtrar evaluaciones
+if (isset($_POST['ajax_filtrar_evaluaciones'])) {
+    $programa_filtro = $_POST['programa_filtro'];
+    
+    $html = '';
+    
+    // Solo buscar evaluaciones si hay un programa seleccionado
+    if (!empty($programa_filtro)) {
+        $sql = "
+            SELECT e.id_evaluacion, e.fecha_evaluacion, u.nombre_unidad, p.nombre_materia, u.id_unidad, p.id_programa 
+            FROM evaluaciones e
+            JOIN unidades u ON e.id_unidad = u.id_unidad
+            JOIN programas p ON u.id_programa = p.id_programa
+            WHERE e.id_usuario = ? AND p.id_programa = ?
+            ORDER BY e.fecha_evaluacion DESC
+        ";
+        
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([$id_usuario, $programa_filtro]);
+        $evaluaciones_filtradas = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        // Generar HTML de las filas de la tabla
+        if (!empty($evaluaciones_filtradas)) {
+            foreach ($evaluaciones_filtradas as $e) {
+                $html .= '<tr>';
+                $html .= '<td>' . htmlspecialchars($e['nombre_materia']) . '</td>';
+                $html .= '<td>' . htmlspecialchars($e['nombre_unidad']) . '</td>';
+                $html .= '<td>' . formatDate($e['fecha_evaluacion']) . '</td>';
+                $html .= '<td>';
+                $html .= '<a href="?eliminar_evaluacion=' . $e['id_evaluacion'] . '" ';
+                $html .= 'class="btn btn-danger" ';
+                $html .= 'onclick="return confirm(\'¿Está seguro de eliminar esta evaluación?\');" ';
+                $html .= 'style="padding: 0.5rem 1rem; font-size: 0.875rem;">';
+                $html .= 'Eliminar</a>';
+                $html .= '</td>';
+                $html .= '</tr>';
+            }
+        } else {
+            $html = '<tr><td colspan="4" class="no-data" style="text-align: center; padding: 2rem;">No hay evaluaciones registradas para el programa seleccionado.</td></tr>';
+        }
+    } else {
+        // Si no hay programa seleccionado, mostrar mensaje
+        $html = '<tr><td colspan="4" class="no-data" style="text-align: center; padding: 2rem;">Selecciona un programa para ver las evaluaciones.</td></tr>';
+    }
+    
+    // Retornar solo el HTML para AJAX
+    echo $html;
+    exit();
+}
 
 // Procesar el registro de evaluaciones
 if (isset($_POST['registrar_evaluacion'])) {
@@ -90,80 +131,78 @@ if (isset($_POST['registrar_evaluacion'])) {
     $id_unidades = isset($_POST['unidades_evaluacion']) ? $_POST['unidades_evaluacion'] : [];
     $fecha_evaluacion = $_POST['fecha_evaluacion'];
     
-    // Validar que la fecha esté dentro del semestre del programa seleccionado
-    $programa_semestre = null;
-    foreach ($programas as $programa) {
-        if ($programa['id_programa'] == $id_programa) {
-            $programa_semestre = $programa['id_semestre'];
-            break;
-        }
-    }
-    
-    if ($programa_semestre) {
-        $fecha_inicio = $semestre_fechas[$programa_semestre]['fecha_inicio'];
-        $fecha_fin = $semestre_fechas[$programa_semestre]['fecha_fin'];
-        
-        if ($fecha_evaluacion < $fecha_inicio || $fecha_evaluacion > $fecha_fin) {
-            $mensaje = "La fecha de evaluación debe estar dentro del periodo del semestre (" . 
-                       formatDate($fecha_inicio) . " - " . formatDate($fecha_fin) . ").";
-            $tipo_mensaje = "danger";
-        } else {
-            // Validar que no se supere el número de unidades del programa
-            $count_unidades_programa = count($unidades_por_programa[$id_programa]);
-            
-            // Contar evaluaciones existentes para esta fecha y programa
-            $stmt = $conn->prepare("
-                SELECT COUNT(*) as total 
-                FROM evaluaciones e
-                JOIN unidades u ON e.id_unidad = u.id_unidad
-                WHERE e.id_usuario = ? AND e.fecha_evaluacion = ? AND u.id_programa = ?
-            ");
-            $stmt->execute([$id_usuario, $fecha_evaluacion, $id_programa]);
-            $evaluaciones_existentes = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
-            
-            $total_evaluaciones = $evaluaciones_existentes + count($id_unidades);
-            
-            if ($total_evaluaciones > $count_unidades_programa) {
-                $mensaje = "No puede tener más evaluaciones que el número de unidades del programa (" . 
-                           $count_unidades_programa . ").";
-                $tipo_mensaje = "danger";
-            } else {
-                // Todo validado, insertar evaluaciones
-                $conn->beginTransaction();
-                try {
-                    foreach ($id_unidades as $id_unidad) {
-                        $stmt = $conn->prepare("
-                            INSERT INTO evaluaciones (id_unidad, id_usuario, fecha_evaluacion) 
-                            VALUES (?, ?, ?)
-                        ");
-                        $stmt->execute([$id_unidad, $id_usuario, $fecha_evaluacion]);
-                    }
-                    
-                    $conn->commit();
-                    $mensaje = "Evaluación(es) registrada(s) correctamente.";
-                    $tipo_mensaje = "success";
-                    
-                    // Actualizar la lista de evaluaciones
-                    $stmt = $conn->prepare("
-                        SELECT e.id_evaluacion, e.fecha_evaluacion, u.nombre_unidad, p.nombre_materia, u.id_unidad, p.id_programa 
-                        FROM evaluaciones e
-                        JOIN unidades u ON e.id_unidad = u.id_unidad
-                        JOIN programas p ON u.id_programa = p.id_programa
-                        WHERE e.id_usuario = ?
-                        ORDER BY e.fecha_evaluacion DESC
-                    ");
-                    $stmt->execute([$id_usuario]);
-                    $evaluaciones = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                } catch (PDOException $e) {
-                    $conn->rollBack();
-                    $mensaje = "Error al registrar la evaluación: " . $e->getMessage();
-                    $tipo_mensaje = "danger";
-                }
+    // Validar que no se seleccionen más de 2 unidades
+    if (count($id_unidades) > 2) {
+        $mensaje = "Solo puedes seleccionar máximo 2 unidades por evaluación.";
+        $tipo_mensaje = "danger";
+    } else if (empty($id_unidades)) {
+        $mensaje = "Debes seleccionar al menos una unidad.";
+        $tipo_mensaje = "danger";
+    } else {
+        // Validar que la fecha esté dentro del semestre del programa seleccionado
+        $programa_semestre = null;
+        foreach ($programas as $programa) {
+            if ($programa['id_programa'] == $id_programa) {
+                $programa_semestre = $programa['id_semestre'];
+                break;
             }
         }
-    } else {
-        $mensaje = "Programa no válido.";
-        $tipo_mensaje = "danger";
+        
+        if ($programa_semestre) {
+            $fecha_inicio = $semestre_fechas[$programa_semestre]['fecha_inicio'];
+            $fecha_fin = $semestre_fechas[$programa_semestre]['fecha_fin'];
+            
+            if ($fecha_evaluacion < $fecha_inicio || $fecha_evaluacion > $fecha_fin) {
+                $mensaje = "La fecha de evaluación debe estar dentro del periodo del semestre (" . 
+                           formatDate($fecha_inicio) . " - " . formatDate($fecha_fin) . ").";
+                $tipo_mensaje = "danger";
+            } else {
+                // Validar que no se supere el número de unidades del programa
+                $count_unidades_programa = count($unidades_por_programa[$id_programa]);
+                
+                // Contar evaluaciones existentes para esta fecha y programa
+                $stmt = $conn->prepare("
+                    SELECT COUNT(*) as total 
+                    FROM evaluaciones e
+                    JOIN unidades u ON e.id_unidad = u.id_unidad
+                    WHERE e.id_usuario = ? AND e.fecha_evaluacion = ? AND u.id_programa = ?
+                ");
+                $stmt->execute([$id_usuario, $fecha_evaluacion, $id_programa]);
+                $evaluaciones_existentes = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+                
+                $total_evaluaciones = $evaluaciones_existentes + count($id_unidades);
+                
+                if ($total_evaluaciones > $count_unidades_programa) {
+                    $mensaje = "No puede tener más evaluaciones que el número de unidades del programa (" . 
+                               $count_unidades_programa . ").";
+                    $tipo_mensaje = "danger";
+                } else {
+                    // Todo validado, insertar evaluaciones
+                    $conn->beginTransaction();
+                    try {
+                        foreach ($id_unidades as $id_unidad) {
+                            $stmt = $conn->prepare("
+                                INSERT INTO evaluaciones (id_unidad, id_usuario, fecha_evaluacion) 
+                                VALUES (?, ?, ?)
+                            ");
+                            $stmt->execute([$id_unidad, $id_usuario, $fecha_evaluacion]);
+                        }
+                        
+                        $conn->commit();
+                        $mensaje = "Evaluación(es) registrada(s) correctamente.";
+                        $tipo_mensaje = "success";
+                        
+                    } catch (PDOException $e) {
+                        $conn->rollBack();
+                        $mensaje = "Error al registrar la evaluación: " . $e->getMessage();
+                        $tipo_mensaje = "danger";
+                    }
+                }
+            }
+        } else {
+            $mensaje = "Programa no válido.";
+            $tipo_mensaje = "danger";
+        }
     }
 }
 
@@ -176,17 +215,6 @@ if (isset($_GET['eliminar_evaluacion']) && is_numeric($_GET['eliminar_evaluacion
         $mensaje = "Evaluación eliminada correctamente.";
         $tipo_mensaje = "success";
         
-        // Actualizar la lista de evaluaciones
-        $stmt = $conn->prepare("
-            SELECT e.id_evaluacion, e.fecha_evaluacion, u.nombre_unidad, p.nombre_materia, u.id_unidad, p.id_programa 
-            FROM evaluaciones e
-            JOIN unidades u ON e.id_unidad = u.id_unidad
-            JOIN programas p ON u.id_programa = p.id_programa
-            WHERE e.id_usuario = ?
-            ORDER BY e.fecha_evaluacion DESC
-        ");
-        $stmt->execute([$id_usuario]);
-        $evaluaciones = $stmt->fetchAll(PDO::FETCH_ASSOC);
     } catch (PDOException $e) {
         $mensaje = "Error al eliminar la evaluación: " . $e->getMessage();
         $tipo_mensaje = "danger";
@@ -213,279 +241,7 @@ foreach ($semestre_fechas as $fechas) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro de Evaluaciones</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 2rem 1rem;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .main-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border-radius: 24px;
-            padding: 2.5rem;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            margin-bottom: 2rem;
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 2.5rem;
-        }
-
-        h1 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: #1f2937;
-            margin-bottom: 0.5rem;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .subtitle {
-            color: #6b7280;
-            font-size: 1.1rem;
-            font-weight: 400;
-        }
-
-        .section {
-            margin-bottom: 2.5rem;
-        }
-
-        .section-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #374151;
-            margin-bottom: 1.5rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid #e5e7eb;
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        label {
-            display: block;
-            font-weight: 500;
-            color: #374151;
-            margin-bottom: 0.5rem;
-            font-size: 0.95rem;
-        }
-
-        select, input[type="date"] {
-            width: 100%;
-            padding: 0.875rem 1rem;
-            border: 2px solid #e5e7eb;
-            border-radius: 12px;
-            font-size: 0.95rem;
-            font-family: inherit;
-            transition: all 0.2s ease;
-            background: white;
-        }
-
-        select:focus, input[type="date"]:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .semestre-info {
-            background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
-            padding: 1rem 1.25rem;
-            border-radius: 12px;
-            margin-top: 1rem;
-            font-weight: 500;
-            color: #374151;
-            border-left: 4px solid #667eea;
-        }
-
-        .unidades-container {
-            background: #f8fafc;
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-top: 1rem;
-            border: 1px solid #e5e7eb;
-        }
-
-        .unidad-checkbox {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.75rem;
-            margin-bottom: 0.5rem;
-            background: white;
-            border-radius: 8px;
-            border: 1px solid #e5e7eb;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .unidad-checkbox:hover {
-            background: #f1f5f9;
-            border-color: #667eea;
-        }
-
-        input[type="checkbox"] {
-            width: 1.2rem;
-            height: 1.2rem;
-            accent-color: #667eea;
-        }
-
-        .btn {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            padding: 0.875rem 1.5rem;
-            border: none;
-            border-radius: 12px;
-            font-weight: 500;
-            font-size: 0.95rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            text-decoration: none;
-            display: inline-block;
-            text-align: center;
-        }
-
-        .btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 8px 16px -4px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn-danger {
-            background: linear-gradient(135deg, #ef4444, #dc2626);
-        }
-
-        .btn-danger:hover {
-            box-shadow: 0 8px 16px -4px rgba(239, 68, 68, 0.4);
-        }
-
-        .table-container {
-            background: white;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            border: 1px solid #e5e7eb;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th {
-            background: linear-gradient(135deg, #f8fafc, #e2e8f0);
-            padding: 1rem;
-            text-align: left;
-            font-weight: 600;
-            color: #374151;
-            border-bottom: 1px solid #e5e7eb;
-        }
-
-        td {
-            padding: 1rem;
-            border-bottom: 1px solid #f1f5f9;
-            color: #4b5563;
-        }
-
-        tr:hover {
-            background: #fafbfc;
-        }
-
-        .mensaje {
-            padding: 1rem 1.25rem;
-            border-radius: 12px;
-            margin-bottom: 1.5rem;
-            font-weight: 500;
-            border-left: 4px solid;
-        }
-
-        .mensaje.success {
-            background: #dcfce7;
-            color: #166534;
-            border-color: #22c55e;
-        }
-
-        .mensaje.danger {
-            background: #fef2f2;
-            color: #991b1b;
-            border-color: #ef4444;
-        }
-
-        .nav-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            justify-content: center;
-            margin-top: 2rem;
-        }
-
-        .nav-buttons a {
-            background: rgba(255, 255, 255, 0.9);
-            color: #374151;
-            text-decoration: none;
-            padding: 0.75rem 1.25rem;
-            border-radius: 12px;
-            font-weight: 500;
-            border: 1px solid #e5e7eb;
-            transition: all 0.2s ease;
-        }
-
-        .nav-buttons a:hover {
-            background: white;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        }
-
-        .no-data {
-            text-align: center;
-            padding: 2rem;
-            color: #6b7280;
-            font-style: italic;
-        }
-
-        @media (max-width: 768px) {
-            body {
-                padding: 1rem 0.5rem;
-            }
-            
-            .main-card {
-                padding: 1.5rem;
-            }
-            
-            h1 {
-                font-size: 2rem;
-            }
-            
-            .nav-buttons {
-                flex-direction: column;
-            }
-            
-            table {
-                font-size: 0.875rem;
-            }
-            
-            th, td {
-                padding: 0.75rem 0.5rem;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="css/style.css">
     <script>
         function cargarUnidades(programaId) {
             // Ocultar todas las secciones de unidades
@@ -528,6 +284,60 @@ foreach ($semestre_fechas as $fechas) {
             var fecha = new Date(fechaStr);
             return fecha.getDate() + '/' + (fecha.getMonth() + 1) + '/' + fecha.getFullYear();
         }
+        
+        // Función para limitar la selección de checkboxes a máximo 2
+        function limitarCheckboxes() {
+            var checkboxes = document.querySelectorAll('input[name="unidades_evaluacion[]"]');
+            var checkedCount = 0;
+            
+            // Contar cuántos están seleccionados
+            checkboxes.forEach(function(checkbox) {
+                if (checkbox.checked) {
+                    checkedCount++;
+                }
+            });
+            
+            // Si hay más de 2 seleccionados, deshabilitar los no seleccionados
+            checkboxes.forEach(function(checkbox) {
+                if (!checkbox.checked && checkedCount >= 2) {
+                    checkbox.disabled = true;
+                } else if (checkedCount < 2) {
+                    checkbox.disabled = false;
+                }
+            });
+            
+            // Mostrar mensaje de aviso
+            var avisoMaximo = document.getElementById('aviso-maximo');
+            if (checkedCount >= 2) {
+                avisoMaximo.style.display = 'block';
+            } else {
+                avisoMaximo.style.display = 'none';
+            }
+        }
+        
+        // Función para filtrar evaluaciones con AJAX
+        function filtrarEvaluaciones() {
+            var programaFiltro = document.getElementById('programa-evaluacion').value;
+            var tbody = document.querySelector('#tabla-evaluaciones tbody');
+            
+            // Mostrar indicador de carga
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 2rem;">Cargando...</td></tr>';
+            
+            // Crear petición AJAX
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '', true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    tbody.innerHTML = xhr.responseText;
+                }
+            };
+            
+            // Enviar datos
+            var data = 'ajax_filtrar_evaluaciones=1&programa_filtro=' + encodeURIComponent(programaFiltro);
+            xhr.send(data);
+        }
     </script>
 </head>
 <body>
@@ -549,7 +359,7 @@ foreach ($semestre_fechas as $fechas) {
                 <form method="POST">
                     <div class="form-group">
                         <label>Seleccionar Programa:</label>
-                        <select name="programa_evaluacion" id="programa-evaluacion" required onchange="cargarUnidades(this.value)">
+                        <select name="programa_evaluacion" id="programa-evaluacion" required onchange="cargarUnidades(this.value); filtrarEvaluaciones();">
                             <option value="">Seleccione un programa</option>
                             <?php foreach ($programas as $programa): ?>
                                 <?php 
@@ -572,13 +382,16 @@ foreach ($semestre_fechas as $fechas) {
                     </div>
                     
                     <div class="form-group">
-                        <label>Seleccionar Unidades:</label>
+                        <label>Seleccionar Unidades (máximo 2):</label>
+                        <div id="aviso-maximo" style="display: none; color: #e74c3c; font-size: 0.9em; margin-bottom: 10px;">
+                            ⚠️ Has alcanzado el límite máximo de 2 unidades por evaluación
+                        </div>
                         <?php foreach ($programas as $programa): ?>
                             <div id="unidades-programa-<?php echo $programa['id_programa']; ?>" class="unidades-container" style="display: none;">
                                 <?php if (isset($unidades_por_programa[$programa['id_programa']])): ?>
                                     <?php foreach ($unidades_por_programa[$programa['id_programa']] as $unidad): ?>
                                         <label class="unidad-checkbox">
-                                            <input type="checkbox" name="unidades_evaluacion[]" value="<?php echo $unidad['id_unidad']; ?>">
+                                            <input type="checkbox" name="unidades_evaluacion[]" value="<?php echo $unidad['id_unidad']; ?>" onchange="limitarCheckboxes()">
                                             <span>Unidad <?php echo $unidad['numero_unidad']; ?>: <?php echo htmlspecialchars($unidad['nombre_unidad']); ?></span>
                                         </label>
                                     <?php endforeach; ?>
@@ -601,39 +414,29 @@ foreach ($semestre_fechas as $fechas) {
             
             <div class="section">
                 <h2 class="section-title">Evaluaciones Registradas</h2>
-                <?php if (!empty($evaluaciones)): ?>
-                    <div class="table-container">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Materia</th>
-                                    <th>Unidad</th>
-                                    <th>Fecha</th>
-                                    <th>Acción</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($evaluaciones as $e): ?>
-                                    <tr>
-                                        <td><?php echo htmlspecialchars($e['nombre_materia']); ?></td>
-                                        <td><?php echo htmlspecialchars($e['nombre_unidad']); ?></td>
-                                        <td><?php echo formatDate($e['fecha_evaluacion']); ?></td>
-                                        <td>
-                                            <a href="?eliminar_evaluacion=<?php echo $e['id_evaluacion']; ?>" 
-                                               class="btn btn-danger" 
-                                               onclick="return confirm('¿Está seguro de eliminar esta evaluación?');" 
-                                               style="padding: 0.5rem 1rem; font-size: 0.875rem;">
-                                               Eliminar
-                                            </a>
-                                        </td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                    </div>
-                <?php else: ?>
-                    <div class="no-data">No hay evaluaciones registradas.</div>
-                <?php endif; ?>
+                <p style="margin-bottom: 15px; color: #666; font-size: 0.9em;">
+                    💡 Selecciona un programa arriba para filtrar las evaluaciones
+                </p>
+                
+                <div class="table-container">
+                    <table id="tabla-evaluaciones">
+                        <thead>
+                            <tr>
+                                <th>Materia</th>
+                                <th>Unidad</th>
+                                <th>Fecha</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="4" class="no-data" style="text-align: center; padding: 2rem;">
+                                    Selecciona un programa para ver las evaluaciones.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
             
             <div class="nav-buttons">

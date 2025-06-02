@@ -123,5 +123,8 @@ $programas = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 });
         });
     </script>
+
+    <a href="p_usuario.php">Volver al Inicio</a>
+
 </body>
 </html>

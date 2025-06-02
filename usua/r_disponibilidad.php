@@ -377,8 +377,8 @@ function calcularDuracionHoras($hora_inicio, $hora_fin) {
     <div class="nav-buttons">
         <a href="r_planificacion.php">Ir a Planificación</a>
         <a href="r_evaluaciones.php">Ir a Evaluaciones</a>
-        <a href="p_reportes.html">Ir a Reportes</a>
-        <a href="p_usuario.html">Ir a Inicio</a>
+        <a href="gestion_dosificacion.php">Ir a Reportes</a>
+        <a href="p_usuario.php">Ir a Inicio</a>
     </div>
     
     <script>

@@ -357,6 +357,7 @@ $evaluaciones = $stmt->fetchAll(PDO::FETCH_ASSOC);
         
         <div class="mb-4">
             <a href="gestion_dosificacion.php" class="btn btn-primary">Volver a Gestión de Dosificación</a>
+            <a href="p_usuario.php" class="btn btn-primary">Volver al inicio</a>
             <button onclick="window.print()" class="btn btn-secondary">Imprimir Reporte</button>
         </div>
     </div>

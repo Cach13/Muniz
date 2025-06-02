@@ -279,8 +279,8 @@ if (!empty($temas)) {
     <div class="nav-buttons">
         <a href="r_disponibilidad.php">Ir a Disponibilidad</a>
         <a href="r_evaluaciones.php">Ir a Evaluaciones</a>
-        <a href="p_reportes.html">Ir a Reportes</a>
-        <a href="p_usuario.html">Ir a Inicio</a>
+        <a href="p_reportes.php">Ir a Reportes</a>
+        <a href="p_usuario.php">Ir a Inicio</a>
     </div>
 </body>
 </html>
