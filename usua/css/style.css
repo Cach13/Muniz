@@ -652,3 +652,13 @@ table tbody td input[type="number"] {
         min-width: 500px;
     }
 }
+
+
+.mensaje-advertencia {
+            color: orange;
+            font-size: 0.9em;
+            margin-top: 5px;
+            padding: 5px;
+            background-color: #fff8e1;
+            border-left: 3px solid orange;
+        }
