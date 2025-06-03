@@ -37,4 +37,4 @@ Maquetacion de todas las pantallas, asi como su base de datos
 
 -Sexto commit: se corrigieron algunos bugs y se agregaron par de detalles y se separo el css de evaluaciones en un archivo .css aparte, faltando aun lo del GRUPO
 
--Ya se ajustaron todos los detalles del backend, ya nomas queda lo visual (los colores de las letras de los títulos ponerlos mas visibles)
+-Septimo commit: Ya se ajustaron todos los detalles del backend, ya nomas queda lo visual (los colores de las letras de los títulos ponerlos mas visibles)
