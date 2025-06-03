@@ -307,13 +307,7 @@ $evaluaciones = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                                     $estado = "Normal";
                                                     $clase_estado = "success";
                                                     
-                                                    if ($d['motivo_reduccion'] == 'dia_no_habil') {
-                                                        $estado = "Día No Hábil";
-                                                        $clase_estado = "secondary";
-                                                    } elseif ($d['motivo_reduccion'] == 'vacaciones') {
-                                                        $estado = "Vacaciones";
-                                                        $clase_estado = "warning";
-                                                    } elseif ($d['motivo_reduccion'] == 'evaluacion') {
+                                                    if ($d['motivo_reduccion'] == 'evaluacion') {
                                                         $estado = "Evaluación";
                                                         $clase_estado = "danger";
                                                     }

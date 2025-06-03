@@ -30,6 +30,14 @@ foreach ($semestres as $semestre) {
     ];
 }
 
+// Obtener días no hábiles
+$stmt = $conn->query("SELECT fecha, descripcion FROM diasnohabiles WHERE id_semestre IN (SELECT id_semestre FROM semestres)");
+$dias_no_habiles = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Obtener períodos de vacaciones
+$stmt = $conn->query("SELECT fecha_inicio, fecha_fin, descripcion FROM vacaciones WHERE id_semestre IN (SELECT id_semestre FROM semestres)");
+$periodos_vacaciones = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 // Obtener programas disponibles para el alumno
 $programas = [];
 if (!empty($semestres)) {
@@ -156,46 +164,74 @@ if (isset($_POST['registrar_evaluacion'])) {
                 $mensaje = "La fecha de evaluación debe estar dentro del periodo del semestre (" . 
                            formatDate($fecha_inicio) . " - " . formatDate($fecha_fin) . ").";
                 $tipo_mensaje = "danger";
-            } else {
-                // Validar que no se supere el número de unidades del programa
-                $count_unidades_programa = count($unidades_por_programa[$id_programa]);
+            } 
+            // Validar que no sea fin de semana
+            else if (date('w', strtotime($fecha_evaluacion)) == 0 || date('w', strtotime($fecha_evaluacion)) == 6) {
+                $mensaje = "No se puede registrar evaluación en fines de semana (sábado o domingo).";
+                $tipo_mensaje = "danger";
+            }
+            // Validar que no sea día no hábil
+            else {
+                $stmt = $conn->prepare("SELECT descripcion FROM diasnohabiles WHERE fecha = ? AND id_semestre = ?");
+                $stmt->execute([$fecha_evaluacion, $programa_semestre]);
+                $dia_no_habil = $stmt->fetch(PDO::FETCH_ASSOC);
                 
-                // Contar evaluaciones existentes para esta fecha y programa
-                $stmt = $conn->prepare("
-                    SELECT COUNT(*) as total 
-                    FROM evaluaciones e
-                    JOIN unidades u ON e.id_unidad = u.id_unidad
-                    WHERE e.id_usuario = ? AND e.fecha_evaluacion = ? AND u.id_programa = ?
-                ");
-                $stmt->execute([$id_usuario, $fecha_evaluacion, $id_programa]);
-                $evaluaciones_existentes = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
-                
-                $total_evaluaciones = $evaluaciones_existentes + count($id_unidades);
-                
-                if ($total_evaluaciones > $count_unidades_programa) {
-                    $mensaje = "No puede tener más evaluaciones que el número de unidades del programa (" . 
-                               $count_unidades_programa . ").";
+                if ($dia_no_habil) {
+                    $mensaje = "No se puede registrar evaluación en días no hábiles (" . $dia_no_habil['descripcion'] . ").";
                     $tipo_mensaje = "danger";
-                } else {
-                    // Todo validado, insertar evaluaciones
-                    $conn->beginTransaction();
-                    try {
-                        foreach ($id_unidades as $id_unidad) {
-                            $stmt = $conn->prepare("
-                                INSERT INTO evaluaciones (id_unidad, id_usuario, fecha_evaluacion) 
-                                VALUES (?, ?, ?)
-                            ");
-                            $stmt->execute([$id_unidad, $id_usuario, $fecha_evaluacion]);
-                        }
-                        
-                        $conn->commit();
-                        $mensaje = "Evaluación(es) registrada(s) correctamente.";
-                        $tipo_mensaje = "success";
-                        
-                    } catch (PDOException $e) {
-                        $conn->rollBack();
-                        $mensaje = "Error al registrar la evaluación: " . $e->getMessage();
+                }
+                // Validar que no esté en período de vacaciones
+                else {
+                    $stmt = $conn->prepare("SELECT descripcion FROM vacaciones WHERE ? BETWEEN fecha_inicio AND fecha_fin AND id_semestre = ?");
+                    $stmt->execute([$fecha_evaluacion, $programa_semestre]);
+                    $vacacion = $stmt->fetch(PDO::FETCH_ASSOC);
+                    
+                    if ($vacacion) {
+                        $mensaje = "No se puede registrar evaluación durante períodos de vacaciones (" . $vacacion['descripcion'] . ").";
                         $tipo_mensaje = "danger";
+                    }
+                    else {
+                        // Validar que no se supere el número de unidades del programa
+                        $count_unidades_programa = count($unidades_por_programa[$id_programa]);
+                        
+                        // Contar evaluaciones existentes para esta fecha y programa
+                        $stmt = $conn->prepare("
+                            SELECT COUNT(*) as total 
+                            FROM evaluaciones e
+                            JOIN unidades u ON e.id_unidad = u.id_unidad
+                            WHERE e.id_usuario = ? AND e.fecha_evaluacion = ? AND u.id_programa = ?
+                        ");
+                        $stmt->execute([$id_usuario, $fecha_evaluacion, $id_programa]);
+                        $evaluaciones_existentes = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+                        
+                        $total_evaluaciones = $evaluaciones_existentes + count($id_unidades);
+                        
+                        if ($total_evaluaciones > $count_unidades_programa) {
+                            $mensaje = "No puede tener más evaluaciones que el número de unidades del programa (" . 
+                                       $count_unidades_programa . ").";
+                            $tipo_mensaje = "danger";
+                        } else {
+                            // Todo validado, insertar evaluaciones
+                            $conn->beginTransaction();
+                            try {
+                                foreach ($id_unidades as $id_unidad) {
+                                    $stmt = $conn->prepare("
+                                        INSERT INTO evaluaciones (id_unidad, id_usuario, fecha_evaluacion) 
+                                        VALUES (?, ?, ?)
+                                    ");
+                                    $stmt->execute([$id_unidad, $id_usuario, $fecha_evaluacion]);
+                                }
+                                
+                                $conn->commit();
+                                $mensaje = "Evaluación(es) registrada(s) correctamente.";
+                                $tipo_mensaje = "success";
+                                
+                            } catch (PDOException $e) {
+                                $conn->rollBack();
+                                $mensaje = "Error al registrar la evaluación: " . $e->getMessage();
+                                $tipo_mensaje = "danger";
+                            }
+                        }
                     }
                 }
             }
@@ -232,6 +268,17 @@ foreach ($semestre_fechas as $fechas) {
         $max_date = $fechas['fecha_fin'];
     }
 }
+
+// Preparar datos de días no hábiles y vacaciones para JavaScript
+$dias_no_habiles_js = array_column($dias_no_habiles, 'fecha');
+$vacaciones_js = [];
+foreach ($periodos_vacaciones as $vacacion) {
+    $vacaciones_js[] = [
+        'inicio' => $vacacion['fecha_inicio'],
+        'fin' => $vacacion['fecha_fin'],
+        'descripcion' => $vacacion['descripcion']
+    ];
+}
 ?>
 
 <!DOCTYPE html>
@@ -242,7 +289,176 @@ foreach ($semestre_fechas as $fechas) {
     <title>Registro de Evaluaciones</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
+       
+</head>
+<body>
+    <div class="container">
+        <div class="main-card">
+            <div class="header">
+                <h1>Registro de Evaluaciones</h1>
+                <p class="subtitle">Gestiona tus evaluaciones académicas</p>
+            </div>
+            
+            <?php if ($mensaje): ?>
+            <div class="mensaje <?php echo $tipo_mensaje; ?>">
+                <?php echo $mensaje; ?>
+            </div>
+            <?php endif; ?>
+            
+            <div class="section">
+                <h2 class="section-title">Registrar Nueva Evaluación</h2>
+                <form method="POST">
+                    <div class="form-group">
+                        <label>Seleccionar Programa:</label>
+                        <select name="programa_evaluacion" id="programa-evaluacion" required onchange="cargarUnidades(this.value); filtrarEvaluaciones();">
+                            <option value="">Seleccione un programa</option>
+                            <?php foreach ($programas as $programa): ?>
+                                <?php 
+                                $semestre_id = $programa['id_semestre'];
+                                $fecha_inicio = $semestre_fechas[$semestre_id]['fecha_inicio'];
+                                $fecha_fin = $semestre_fechas[$semestre_id]['fecha_fin'];
+                                $semestre_nombre = $semestre_fechas[$semestre_id]['nombre'];
+                                ?>
+                                <option value="<?php echo $programa['id_programa']; ?>" 
+                                        data-semestre="<?php echo $semestre_id; ?>"
+                                        data-semestre-nombre="<?php echo htmlspecialchars($semestre_nombre); ?>"
+                                        data-fecha-inicio="<?php echo $fecha_inicio; ?>"
+                                        data-fecha-fin="<?php echo $fecha_fin; ?>">
+                                    <?php echo htmlspecialchars($programa['nombre_materia']); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                        
+                        <div id="semestre-info" class="semestre-info" style="display: none;"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Seleccionar Unidades (máximo 2):</label>
+                        <div id="aviso-maximo" style="display: none; color: #e74c3c; font-size: 0.9em; margin-bottom: 10px;">
+                            ⚠️ Has alcanzado el límite máximo de 2 unidades por evaluación
+                        </div>
+                        <?php foreach ($programas as $programa): ?>
+                            <div id="unidades-programa-<?php echo $programa['id_programa']; ?>" class="unidades-container" style="display: none;">
+                                <?php if (isset($unidades_por_programa[$programa['id_programa']])): ?>
+                                    <?php foreach ($unidades_por_programa[$programa['id_programa']] as $unidad): ?>
+                                        <label class="unidad-checkbox">
+                                            <input type="checkbox" name="unidades_evaluacion[]" value="<?php echo $unidad['id_unidad']; ?>" onchange="limitarCheckboxes()">
+                                            <span>Unidad <?php echo $unidad['numero_unidad']; ?>: <?php echo htmlspecialchars($unidad['nombre_unidad']); ?></span>
+                                        </label>
+                                    <?php endforeach; ?>
+                                <?php else: ?>
+                                    <p class="no-data">No hay unidades disponibles para este programa.</p>
+                                <?php endif; ?>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Fecha de evaluación:</label>
+                        <input type="date" name="fecha_evaluacion" id="fecha-evaluacion" required 
+                               min="<?php echo $min_date; ?>" max="<?php echo $max_date; ?>">
+                        <div id="advertencia-dia" class="mensaje-advertencia" style="display: none;"></div>
+                    </div>
+                    
+                    <button type="submit" name="registrar_evaluacion" class="btn">Registrar Evaluación</button>
+                </form>
+            </div>
+            
+            <div class="section">
+                <h2 class="section-title">Evaluaciones Registradas</h2>
+                <p style="margin-bottom: 15px; color: #666; font-size: 0.9em;">
+                    💡 Selecciona un programa arriba para filtrar las evaluaciones
+                </p>
+                
+                <div class="table-container">
+                    <table id="tabla-evaluaciones">
+                        <thead>
+                            <tr>
+                                <th>Materia</th>
+                                <th>Unidad</th>
+                                <th>Fecha</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="4" class="no-data" style="text-align: center; padding: 2rem;">
+                                    Selecciona un programa para ver las evaluaciones.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="nav-buttons">
+                <a href="r_planificacion.php">Ir a Planificación</a>
+                <a href="r_disponibilidad.php">Ir a Disponibilidad</a>
+                <a href="gestion_dosificacion.php">Ir a Reportes</a>
+                <a href="p_usuario.php">Ir a Inicio</a>
+            </div>
+        </div>
+    </div>
+
     <script>
+        // Datos de días no hábiles y vacaciones para JavaScript
+        const diasNoHabiles = <?php echo json_encode($dias_no_habiles_js); ?>;
+        const periodosVacaciones = <?php echo json_encode($vacaciones_js); ?>;
+        
+        // Función para verificar si una fecha es fin de semana
+        function esFinDeSemana(fecha) {
+            const dia = fecha.getDay();
+            return dia === 0 || dia === 6; // 0 es domingo, 6 es sábado
+        }
+        
+        // Función para verificar si una fecha es día no hábil
+        function esDiaNoHabil(fecha) {
+            const fechaStr = fecha.toISOString().split('T')[0];
+            return diasNoHabiles.includes(fechaStr);
+        }
+        
+        // Función para verificar si una fecha está en período de vacaciones
+        function estaEnVacaciones(fecha) {
+            const fechaStr = fecha.toISOString().split('T')[0];
+            for (const periodo of periodosVacaciones) {
+                if (fechaStr >= periodo.inicio && fechaStr <= periodo.fin) {
+                    return periodo;
+                }
+            }
+            return null;
+        }
+        
+        // Función para mostrar advertencias de días no hábiles
+        function verificarDiaNoHabil(fechaInput) {
+            const fecha = new Date(fechaInput.value);
+            let mensaje = '';
+            
+            if (esFinDeSemana(fecha)) {
+                mensaje = '⚠️ Advertencia: Has seleccionado un fin de semana (sábado o domingo).';
+            } else if (esDiaNoHabil(fecha)) {
+                mensaje = '⚠️ Advertencia: Has seleccionado un día feriado no hábil.';
+            } else {
+                const vacacion = estaEnVacaciones(fecha);
+                if (vacacion) {
+                    mensaje = `⚠️ Advertencia: Has seleccionado un día dentro del período de vacaciones (${vacacion.descripcion}).`;
+                }
+            }
+            
+            if (mensaje) {
+                const advertencia = document.getElementById('advertencia-dia');
+                advertencia.textContent = mensaje;
+                advertencia.style.display = 'block';
+            } else {
+                const advertencia = document.getElementById('advertencia-dia');
+                advertencia.style.display = 'none';
+            }
+        }
+        
+        // Evento para verificar días no hábiles al cambiar la fecha
+        document.getElementById('fecha-evaluacion').addEventListener('change', function() {
+            verificarDiaNoHabil(this);
+        });
+        
         function cargarUnidades(programaId) {
             // Ocultar todas las secciones de unidades
             var contenedoresUnidades = document.querySelectorAll('.unidades-container');
@@ -339,113 +555,5 @@ foreach ($semestre_fechas as $fechas) {
             xhr.send(data);
         }
     </script>
-</head>
-<body>
-    <div class="container">
-        <div class="main-card">
-            <div class="header">
-                <h1>Registro de Evaluaciones</h1>
-                <p class="subtitle">Gestiona tus evaluaciones académicas</p>
-            </div>
-            
-            <?php if ($mensaje): ?>
-            <div class="mensaje <?php echo $tipo_mensaje; ?>">
-                <?php echo $mensaje; ?>
-            </div>
-            <?php endif; ?>
-            
-            <div class="section">
-                <h2 class="section-title">Registrar Nueva Evaluación</h2>
-                <form method="POST">
-                    <div class="form-group">
-                        <label>Seleccionar Programa:</label>
-                        <select name="programa_evaluacion" id="programa-evaluacion" required onchange="cargarUnidades(this.value); filtrarEvaluaciones();">
-                            <option value="">Seleccione un programa</option>
-                            <?php foreach ($programas as $programa): ?>
-                                <?php 
-                                $semestre_id = $programa['id_semestre'];
-                                $fecha_inicio = $semestre_fechas[$semestre_id]['fecha_inicio'];
-                                $fecha_fin = $semestre_fechas[$semestre_id]['fecha_fin'];
-                                $semestre_nombre = $semestre_fechas[$semestre_id]['nombre'];
-                                ?>
-                                <option value="<?php echo $programa['id_programa']; ?>" 
-                                        data-semestre="<?php echo $semestre_id; ?>"
-                                        data-semestre-nombre="<?php echo htmlspecialchars($semestre_nombre); ?>"
-                                        data-fecha-inicio="<?php echo $fecha_inicio; ?>"
-                                        data-fecha-fin="<?php echo $fecha_fin; ?>">
-                                    <?php echo htmlspecialchars($programa['nombre_materia']); ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                        
-                        <div id="semestre-info" class="semestre-info" style="display: none;"></div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Seleccionar Unidades (máximo 2):</label>
-                        <div id="aviso-maximo" style="display: none; color: #e74c3c; font-size: 0.9em; margin-bottom: 10px;">
-                            ⚠️ Has alcanzado el límite máximo de 2 unidades por evaluación
-                        </div>
-                        <?php foreach ($programas as $programa): ?>
-                            <div id="unidades-programa-<?php echo $programa['id_programa']; ?>" class="unidades-container" style="display: none;">
-                                <?php if (isset($unidades_por_programa[$programa['id_programa']])): ?>
-                                    <?php foreach ($unidades_por_programa[$programa['id_programa']] as $unidad): ?>
-                                        <label class="unidad-checkbox">
-                                            <input type="checkbox" name="unidades_evaluacion[]" value="<?php echo $unidad['id_unidad']; ?>" onchange="limitarCheckboxes()">
-                                            <span>Unidad <?php echo $unidad['numero_unidad']; ?>: <?php echo htmlspecialchars($unidad['nombre_unidad']); ?></span>
-                                        </label>
-                                    <?php endforeach; ?>
-                                <?php else: ?>
-                                    <p class="no-data">No hay unidades disponibles para este programa.</p>
-                                <?php endif; ?>
-                            </div>
-                        <?php endforeach; ?>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Fecha de evaluación:</label>
-                        <input type="date" name="fecha_evaluacion" id="fecha-evaluacion" required 
-                               min="<?php echo $min_date; ?>" max="<?php echo $max_date; ?>">
-                    </div>
-                    
-                    <button type="submit" name="registrar_evaluacion" class="btn">Registrar Evaluación</button>
-                </form>
-            </div>
-            
-            <div class="section">
-                <h2 class="section-title">Evaluaciones Registradas</h2>
-                <p style="margin-bottom: 15px; color: #666; font-size: 0.9em;">
-                    💡 Selecciona un programa arriba para filtrar las evaluaciones
-                </p>
-                
-                <div class="table-container">
-                    <table id="tabla-evaluaciones">
-                        <thead>
-                            <tr>
-                                <th>Materia</th>
-                                <th>Unidad</th>
-                                <th>Fecha</th>
-                                <th>Acción</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td colspan="4" class="no-data" style="text-align: center; padding: 2rem;">
-                                    Selecciona un programa para ver las evaluaciones.
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            
-            <div class="nav-buttons">
-                <a href="r_planificacion.php">Ir a Planificación</a>
-                <a href="r_disponibilidad.php">Ir a Disponibilidad</a>
-                <a href="gestion_dosificacion.php">Ir a Reportes</a>
-                <a href="p_usuario.php">Ir a Inicio</a>
-            </div>
-        </div>
-    </div>
 </body>
 </html>
