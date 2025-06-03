@@ -36,3 +36,5 @@ Maquetacion de todas las pantallas, asi como su base de datos
 -Quinto commit: se concluye la funcionalidad de generacion de reportes añadiendo 3 nuevos scripts, se añade funcionalidad a todas las partes de la pagina para no poder accesar sin iniciar sesion, cambio final a la estructura de la base de datos (se agregaron 2 columnas a la tabla dosificacion), listo para INICIAR CAMBIOS VISUALES y PRUEBAS COMPLETAS
 
 -Sexto commit: se corrigieron algunos bugs y se agregaron par de detalles y se separo el css de evaluaciones en un archivo .css aparte, faltando aun lo del GRUPO
+
+-Ya se ajustaron todos los detalles del backend, ya nomas queda lo visual (los colores de las letras de los títulos ponerlos mas visibles)
