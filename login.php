@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     
     try {
-        $stmt = $conn->prepare("SELECT id_usuario, nombre, contraseña, rol FROM Usuarios WHERE nombre = :username");
+        $stmt = $conn->prepare("SELECT id_usuario, nombre, contraseña, rol FROM usuarios WHERE nombre = :username");
         $stmt->bindParam(':username', $username);
         $stmt->execute();
         
@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 // Migrar a hash
                 $newHash = password_hash($password, PASSWORD_DEFAULT);
 
-                $updateStmt = $conn->prepare("UPDATE Usuarios SET contraseña = :newHash WHERE id_usuario = :id");
+                $updateStmt = $conn->prepare("UPDATE usuarios SET contraseña = :newHash WHERE id_usuario = :id");
                 $updateStmt->bindParam(':newHash', $newHash);
                 $updateStmt->bindParam(':id', $user['id_usuario']);
                 $updateStmt->execute();
