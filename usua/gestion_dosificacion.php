@@ -34,21 +34,25 @@ $programas = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Dosificación</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="container mt-4">
-        <h1>Gestión de Dosificación</h1>
-        
-        <div class="card mb-4">
-            <div class="card-header">
-                <h2>Calcular Dosificación</h2>
+    <div class="container">
+        <div class="main-card">
+            <div class="header">
+                <h1>Gestión de Dosificación</h1>
+                <p class="subtitle">Calcula y visualiza la dosificación de tus programas académicos</p>
             </div>
-            <div class="card-body">
+            
+            <!-- Sección de Cálculo de Dosificación -->
+            <div class="form-section">
+                <h3 class="section-title">Calcular Dosificación</h3>
+                
                 <form id="formDosificacion">
-                    <div class="mb-3">
-                        <label for="programa_id" class="form-label">Seleccionar Programa:</label>
-                        <select name="programa_id" id="programa_id" class="form-select" required>
+                    <div class="form-group">
+                        <label for="programa_id">Seleccionar Programa:</label>
+                        <select name="programa_id" id="programa_id" required>
                             <option value="">-- Seleccione un programa --</option>
                             <?php foreach ($programas as $programa): ?>
                                 <option value="<?= $programa['id_programa'] ?>">
@@ -58,22 +62,20 @@ $programas = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         </select>
                     </div>
                     
-                    <button type="submit" class="btn btn-primary">Calcular Dosificación</button>
+                    <button type="submit" class="btn">Calcular Dosificación</button>
                 </form>
                 
-                <div id="mensajeResultado" class="mt-3" style="display:none;"></div>
+                <div id="mensajeResultado" style="display:none;"></div>
             </div>
-        </div>
-        
-        <div class="card">
-            <div class="card-header">
-                <h2>Ver Dosificación</h2>
-            </div>
-            <div class="card-body">
+            
+            <!-- Sección de Visualización de Dosificación -->
+            <div class="form-section">
+                <h3 class="section-title">Ver Dosificación</h3>
+                
                 <form action="ver_dosificacion.php" method="get">
-                    <div class="mb-3">
-                        <label for="programa_id_ver" class="form-label">Seleccionar Programa:</label>
-                        <select name="programa_id" id="programa_id_ver" class="form-select" required>
+                    <div class="form-group">
+                        <label for="programa_id_ver">Seleccionar Programa:</label>
+                        <select name="programa_id" id="programa_id_ver" required>
                             <option value="">-- Seleccione un programa --</option>
                             <?php foreach ($programas as $programa): ?>
                                 <option value="<?= $programa['id_programa'] ?>">
@@ -83,48 +85,52 @@ $programas = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         </select>
                     </div>
                     
-                    <button type="submit" class="btn btn-success">Ver Dosificación</button>
+                    <button type="submit" class="btn">Ver Dosificación</button>
                 </form>
+            </div>
+
+            <!-- Navegación -->
+            <div class="nav-buttons">
+                <a href="p_usuario.php">Volver al Inicio</a>
             </div>
         </div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script>
         document.getElementById('formDosificacion').addEventListener('submit', function(e) {
             e.preventDefault();
             
             const programaId = document.getElementById('programa_id').value;
             if (!programaId) {
-                alert('Por favor seleccione un programa');
+                const mensajeDiv = document.getElementById('mensajeResultado');
+                mensajeDiv.style.display = 'block';
+                mensajeDiv.innerHTML = '<div class="mensaje danger">Por favor seleccione un programa</div>';
                 return;
             }
             
             const mensaje = document.getElementById('mensajeResultado');
             mensaje.style.display = 'block';
-            mensaje.innerHTML = '<div class="alert alert-info">Calculando dosificación, por favor espere...</div>';
+            mensaje.innerHTML = '<div class="mensaje warning">Calculando dosificación, por favor espere...</div>';
             
             fetch('calcular_dosificacion.php?programa_id=' + programaId)
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
                         mensaje.innerHTML = `
-                            <div class="alert alert-success">
+                            <div class="mensaje success">
                                 ${data.message}
-                                <a href="ver_dosificacion.php?programa_id=${data.programa_id}" class="btn btn-sm btn-primary mt-2">Ver Dosificación</a>
+                                <br><br>
+                                <a href="ver_dosificacion.php?programa_id=${data.programa_id}" class="btn" style="display: inline-block; margin-top: 10px;">Ver Dosificación</a>
                             </div>
                         `;
                     } else {
-                        mensaje.innerHTML = `<div class="alert alert-danger">${data.message}</div>`;
+                        mensaje.innerHTML = `<div class="mensaje danger">${data.message}</div>`;
                     }
                 })
                 .catch(error => {
-                    mensaje.innerHTML = `<div class="alert alert-danger">Error al calcular la dosificación: ${error}</div>`;
+                    mensaje.innerHTML = `<div class="mensaje danger">Error al calcular la dosificación: ${error}</div>`;
                 });
         });
     </script>
-
-    <a href="p_usuario.php">Volver al Inicio</a>
-
 </body>
 </html>

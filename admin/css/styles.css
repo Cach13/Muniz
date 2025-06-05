@@ -9,6 +9,7 @@
    - Diseño responsive mobile-first OPTIMIZADO
    - Animaciones suaves y microinteracciones
    - Máximo aprovechamiento del espacio en móviles
+   - BOTONES CON MORADO FUERTE Y LETRAS BLANCAS
    
    ============================================================================= */
 
@@ -18,15 +19,17 @@
 
 :root {
   /* Gradientes principales */
-  --primary-gradient: linear-gradient(135deg, #540ecd 0%, #764ba2 100%);
+  --primary-gradient: linear-gradient(135deg, #667eea 0%, #8B5CF6 100%);
   --secondary-gradient: linear-gradient(135deg, #374151, #1f2937);
   --success-gradient: linear-gradient(135deg, #10b981, #059669);
   --danger-gradient: linear-gradient(135deg, #ef4444, #dc2626);
   --warning-gradient: linear-gradient(135deg, #f59e0b, #d97706);
-  --bg-main: linear-gradient(135deg, #969cb4 0%, #764ba2 100%);
+  --bg-main: linear-gradient(135deg, #fbfbfb 0%, #764ba2 100%);
   
   /* Colores sólidos */
-  --primary-color: #540ecd;
+  --primary-color: #6B1EBF;
+  --primary-dark: #5B1AAF;
+  --primary-darker: #4B169F;
   --success-color: #10b981;
   --danger-color: #ef4444;
   --warning-color: #f59e0b;
@@ -47,6 +50,7 @@
   --shadow-glass: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   --shadow-hover: 0 8px 16px -4px rgba(0, 0, 0, 0.2);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-purple: 0 8px 16px -4px rgba(107, 30, 191, 0.3);
   
   /* Border radius */
   --radius: 12px;
@@ -123,6 +127,78 @@ h2 {
   background: none !important;
   -webkit-text-fill-color: var(--text-primary) !important;
   text-shadow: none !important;
+}
+
+/* =============================================================================
+   SOLUCIÓN GENERAL: H2 + FORMULARIO INTEGRADO
+   ============================================================================= */
+
+/* Cuando un h2 está inmediatamente antes de un formulario o contenedor glass */
+h2 + form,
+h2 + .glass-container,
+h2 + .login-container,
+h2 + .menu-container,
+h2 + .table-container {
+  margin-top: -1.5rem; /* Reduce el espacio entre h2 y contenedor */
+  padding-top: 4rem; /* Aumenta el padding superior para compensar */
+}
+
+/* El h2 que está antes del formulario se posiciona como si estuviera dentro */
+h2 + form::before,
+h2 + .glass-container::before,
+h2 + .login-container::before,
+h2 + .menu-container::before,
+h2 + .table-container::before {
+  content: '';
+  position: absolute;
+  top: -3rem; /* Extiende el fondo hacia arriba para cubrir el h2 */
+  left: -1px;
+  right: -1px;
+  height: calc(100% + 3rem); /* Aumenta la altura total */
+  background: var(--bg-glass);
+  backdrop-filter: blur(20px);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-glass);
+  border: 1px solid var(--border-glass);
+  z-index: -1; /* Coloca el fondo detrás del contenido */
+}
+
+/* Mantiene la línea decorativa en la parte superior real */
+h2 + form::after,
+h2 + .glass-container::after,
+h2 + .login-container::after,
+h2 + .menu-container::after,
+h2 + .table-container::after {
+  content: '';
+  position: absolute;
+  top: -3rem;
+  left: -1px;
+  right: -1px;
+  height: 4px;
+  background: var(--primary-gradient);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  z-index: 1;
+}
+
+/* Ajusta el h2 que está antes del formulario */
+h2 + form,
+h2 + .glass-container,
+h2 + .login-container,
+h2 + .menu-container,
+h2 + .table-container {
+  position: relative;
+}
+
+/* Elimina el background duplicado del contenedor original cuando está precedido por h2 */
+h2 + form,
+h2 + .glass-container,
+h2 + .login-container,
+h2 + .menu-container,
+h2 + .table-container {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  box-shadow: none !important;
+  border: none !important;
 }
 
 /* =============================================================================
@@ -203,7 +279,7 @@ input, select, textarea {
 input:focus, select:focus, textarea:focus {
   outline: none;
   border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  box-shadow: 0 0 0 3px rgba(107, 30, 191, 0.1);
   transform: translateY(-1px);
 }
 
@@ -235,13 +311,13 @@ select {
 .warning { border-color: var(--warning-color) !important; }
 
 /* =============================================================================
-   6. SISTEMA DE BOTONES
+   6. SISTEMA DE BOTONES - MORADO FUERTE CON LETRAS BLANCAS
    ============================================================================= */
 
 button {
   padding: 1rem 1.5rem;
-  background: var(--primary-gradient);
-  color: white;
+  background: var(--primary-color);
+  color: white !important;
   border: none;
   border-radius: var(--radius);
   cursor: pointer;
@@ -253,9 +329,11 @@ button {
   justify-content: center;
   gap: 0.75rem;
   min-width: 140px;
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-purple);
   position: relative;
   overflow: hidden;
+  text-decoration: none;
+  font-family: inherit;
 }
 
 /* Efecto shimmer en hover */
@@ -266,23 +344,64 @@ button::before {
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
   transition: left 0.5s ease;
 }
 
 button:hover {
+  background: var(--primary-dark);
   transform: translateY(-2px);
-  box-shadow: var(--shadow-hover);
+  box-shadow: 0 12px 20px -6px rgba(107, 30, 191, 0.4);
 }
 
 button:hover::before { left: 100%; }
-button:active { transform: translateY(-1px); }
 
-/* Variantes de botones */
-.btn-danger { background: var(--danger-gradient); }
-.btn-secondary { background: var(--secondary-gradient); }
-.btn-success { background: var(--success-gradient); }
-.btn-warning { background: var(--warning-gradient); }
+button:active { 
+  transform: translateY(-1px); 
+  background: var(--primary-darker);
+}
+
+button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(107, 30, 191, 0.3), var(--shadow-purple);
+}
+
+/* Variantes de botones - Manteniendo colores específicos */
+.btn-danger { 
+  background: var(--danger-color) !important; 
+  box-shadow: 0 8px 16px -4px rgba(239, 68, 68, 0.3);
+}
+.btn-danger:hover { 
+  background: #dc2626 !important; 
+  box-shadow: 0 12px 20px -6px rgba(239, 68, 68, 0.4);
+}
+
+.btn-secondary { 
+  background: #374151 !important; 
+  box-shadow: 0 8px 16px -4px rgba(55, 65, 81, 0.3);
+}
+.btn-secondary:hover { 
+  background: #1f2937 !important; 
+  box-shadow: 0 12px 20px -6px rgba(55, 65, 81, 0.4);
+}
+
+.btn-success { 
+  background: var(--success-color) !important; 
+  box-shadow: 0 8px 16px -4px rgba(16, 185, 129, 0.3);
+}
+.btn-success:hover { 
+  background: #059669 !important; 
+  box-shadow: 0 12px 20px -6px rgba(16, 185, 129, 0.4);
+}
+
+.btn-warning { 
+  background: var(--warning-color) !important; 
+  box-shadow: 0 8px 16px -4px rgba(245, 158, 11, 0.3);
+}
+.btn-warning:hover { 
+  background: #d97706 !important; 
+  box-shadow: 0 12px 20px -6px rgba(245, 158, 11, 0.4);
+}
 
 /* Modificadores de tamaño */
 .btn-full { width: 100%; flex: none; }
@@ -297,6 +416,21 @@ button:active { transform: translateY(-1px); }
 }
 
 .button-group button { flex: 1; }
+
+/* Botón deshabilitado */
+button:disabled {
+  background: #9ca3af !important;
+  color: #6b7280 !important;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+button:disabled:hover {
+  background: #9ca3af !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
 
 /* =============================================================================
    7. MENSAJES DE ESTADO UNIFICADOS
@@ -378,7 +512,7 @@ th, td {
 }
 
 th {
-  background: rgba(102, 126, 234, 0.05);
+  background: rgba(107, 30, 191, 0.05);
   color: var(--text-primary);
   font-weight: 600;
   font-size: 0.9rem;
@@ -391,7 +525,7 @@ tr {
 }
 
 tr:hover {
-  background: rgba(102, 126, 234, 0.08);
+  background: rgba(107, 30, 191, 0.08);
   transform: translateX(2px);
 }
 
@@ -432,24 +566,48 @@ tr:last-child td { border-bottom: none; }
   margin: 0.75rem 0;
   padding: 1rem 1.5rem;
   background: var(--primary-color);
-  color: white;
+  color: white !important;
   text-decoration: none;
   border-radius: var(--radius);
-  font-weight: 500;
+  font-weight: 600;
   font-size: 0.875rem;
   transition: var(--transition);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-purple);
 }
 
 .menu-container a:hover {
+  background: var(--primary-dark);
   transform: translateY(-1px);
-  box-shadow: var(--shadow-hover);
+  box-shadow: 0 12px 20px -6px rgba(107, 30, 191, 0.4);
 }
 
 /* Colores específicos para enlaces del menú */
-.menu-container a:nth-child(2) { background: var(--success-gradient); }
-.menu-container a:nth-child(3) { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
-.menu-container a:nth-child(4) { background: var(--warning-gradient); }
+.menu-container a:nth-child(2) { 
+  background: var(--success-color); 
+  box-shadow: 0 8px 16px -4px rgba(16, 185, 129, 0.3);
+}
+.menu-container a:nth-child(2):hover { 
+  background: #059669; 
+  box-shadow: 0 12px 20px -6px rgba(16, 185, 129, 0.4);
+}
+
+.menu-container a:nth-child(3) { 
+  background: #8b5cf6; 
+  box-shadow: 0 8px 16px -4px rgba(139, 92, 246, 0.3);
+}
+.menu-container a:nth-child(3):hover { 
+  background: #7c3aed; 
+  box-shadow: 0 12px 20px -6px rgba(139, 92, 246, 0.4);
+}
+
+.menu-container a:nth-child(4) { 
+  background: var(--warning-color); 
+  box-shadow: 0 8px 16px -4px rgba(245, 158, 11, 0.3);
+}
+.menu-container a:nth-child(4):hover { 
+  background: #d97706; 
+  box-shadow: 0 12px 20px -6px rgba(245, 158, 11, 0.4);
+}
 
 /* =============================================================================
    10. ENLACES Y NAVEGACIÓN
@@ -461,22 +619,24 @@ a {
   justify-content: center;
   gap: 0.5rem;
   margin: 2rem auto 0 auto;
-  color: var(--primary-color);
+  color: white !important;
   text-decoration: none;
   font-weight: 600;
   transition: var(--transition);
   padding: 0.75rem 1rem;
   border-radius: var(--radius);
-  background: rgba(102, 126, 234, 0.1);
+  background: var(--primary-color);
   backdrop-filter: blur(10px);
   text-align: center;
   width: fit-content;
   max-width: 200px;
+  box-shadow: var(--shadow-purple);
 }
 
 a:hover {
-  background: rgba(102, 126, 234, 0.15);
+  background: var(--primary-dark);
   transform: translateY(-2px);
+  box-shadow: 0 12px 20px -6px rgba(107, 30, 191, 0.4);
 }
 
 /* =============================================================================

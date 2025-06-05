@@ -108,7 +108,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] != 'admin') {
             left: 0;
             width: 4px;
             height: 100%;
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: linear-gradient(135deg #fbfbfb, #764ba2);
             transform: scaleY(0);
             transition: transform 0.2s ease;
         }

@@ -21,7 +21,7 @@
   --transition: all 0.2s ease;
   
   /* Fondo principal más claro y legible */
-  --bg-main: linear-gradient(135deg, #969cb4 0%, #764ba2 100%);
+  --bg-main: linear-gradient(135deg, #fbfbfb 0%, #764ba2 100%);
   
   /* Variables adicionales para compatibilidad */
   --primary-light: #dbeafe;

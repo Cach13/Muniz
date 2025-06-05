@@ -271,6 +271,7 @@ foreach ($periodos_vacaciones as $vacacion) {
     
 </head>
 <body>
+    <div class="main-card">
     <h2>Registrar Nueva Disponibilidad</h2>
     
     <?php if ($mensaje): ?>

@@ -110,10 +110,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body class="general-page">
     <h2>Registrar Programa Académico</h2>
 
-    <div class="info-horas">
-        <h4>📋 Información sobre las horas</h4>
-        <p>Las horas que ingreses representan las horas semanales. El sistema automáticamente las multiplicará por 16 semanas para calcular el total del semestre.</p>
-    </div>
+    
 
     <?php if (!empty($mensaje)): ?>
         <div class="mensaje <?php echo $tipo_mensaje; ?>">
