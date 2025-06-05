@@ -117,7 +117,9 @@ function calcularDuracionHoras($hora_inicio, $hora_fin) {
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+    <div class="main-card">
     <h2>Disponibilidad Programada</h2>
+    </div>
     
     <?php if ($mensaje): ?>
     <div class="mensaje <?php echo $tipo_mensaje; ?>">

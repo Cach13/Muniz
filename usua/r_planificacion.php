@@ -292,6 +292,7 @@ if (!empty($temas)) {
             
             <div class="nav-buttons">
                 <a href="r_disponibilidad.php">Ir a Disponibilidad</a>
+                <a href="ver_disponibilidad.php" class="btn-secondary">Ver Disponibilidad Programada</a>
                 <a href="r_evaluaciones.php">Ir a Evaluaciones</a>
                 <a href="gestion_dosificacion.php">Ir a Reportes</a>
                 <a href="p_usuario.php">Ir a Inicio</a>
