@@ -1,0 +1,8 @@
+URL proyecto hosteado: https://darkgoldenrod-leopard-967675.hostingersite.com
+
+admin: jazmin contra:1234
+usuario: eric contra 1234
+
+en local:
+admin: jazmin contra:1234
+usuario: eric contra 123
